@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import NeuralNetworkCanvas from "../components/NeuralNetworkCanvas";
+import EEGWaveCanvas from "../components/EEGWaveCanvas";
+import useCountUp from "../utils/useCountUp";
 
 /**
- * LandingPage - Hero/marketing page for EmoHarmony.
- * Animated brainwave header, features grid, how-it-works, CTA.
+ * LandingPage — Hero with live neural network background, scrolling EEG wave,
+ * and animated counter stats.
  */
 const features = [
     { icon: "🧠", title: "EEG Signal Processing", desc: "Advanced Butterworth filtering, artifact removal, and band-power extraction from raw brainwave data." },
@@ -12,7 +15,7 @@ const features = [
     { icon: "📊", title: "Real-time Visualization", desc: "Dynamic band-power charts, emotion probability bars, and brainwave signal plots." },
     { icon: "📈", title: "Longitudinal Analytics", desc: "Track emotional trends, stress index, and calmness ratio across all your sessions." },
     { icon: "📄", title: "PDF Reports", desc: "Export detailed clinical-style reports with emotion results, interpretations, and graphs." },
-    { icon: "🗄️", title: "Dataset Repository", desc: "Access preloaded public EEG datasets (DEAP, SEED) for quick analysis without uploading." },
+    { icon: "🩺", title: "Emotional Wellness Insights", desc: "Understand your stress index and calmness ratio with AI-driven mental health guidance." },
 ];
 
 const steps = [
@@ -23,12 +26,24 @@ const steps = [
     { num: "05", title: "Results & Insights", desc: "View interactive visualizations, download reports, and track your emotional health over time." },
 ];
 
+/* ── Animated Stat Item (uses CountUp hook) ───────────────────────── */
+const StatItem = ({ end, suffix, label }) => {
+    const [val, ref] = useCountUp(end, 1400, suffix);
+    return (
+        <div ref={ref} className="text-center">
+            <div className="text-3xl font-bold" style={{ color: "#67e8f9" }}>{val}</div>
+            <div className="text-xs text-slate-500 mt-1">{label}</div>
+        </div>
+    );
+};
+
 const LandingPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-neuro text-white overflow-x-hidden">
+
             {/* ── Navbar ─────────────────────────────────────── */}
             <header className="glass-dark border-b border-white/5 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -38,7 +53,10 @@ const LandingPage = () => {
                                 <div key={i} className="wave-bar" style={{ height: `${h}px`, animationDelay: `${i * 0.1}s` }} />
                             ))}
                         </div>
-                        <span className="text-xl font-bold"><span className="text-white">Emo</span><span className="text-indigo-400">Harmony</span></span>
+                        <span className="text-xl font-bold">
+                            <span className="text-white">Emo</span>
+                            <span style={{ color: "#22d3ee" }}>Harmony</span>
+                        </span>
                     </div>
                     <div className="flex items-center gap-3">
                         {user ? (
@@ -54,31 +72,31 @@ const LandingPage = () => {
             </header>
 
             {/* ── Hero ───────────────────────────────────────── */}
-            <section className="relative min-h-[90vh] flex items-center justify-center text-center px-6 overflow-hidden">
-                {/* Decorative glows */}
+            <section className="relative min-h-[92vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+
+                {/* 🌐 Neural Network animated canvas */}
+                <NeuralNetworkCanvas />
+
+                {/* Layered glows on top of the canvas */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full" style={{ background: "radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)" }} />
-                    <div className="absolute top-10 left-10 w-72 h-72 rounded-full" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)" }} />
-                    <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)" }} />
+                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full" style={{ background: "radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 70%)" }} />
+                    <div className="absolute top-10   left-10  w-72 h-72 rounded-full" style={{ background: "radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%)" }} />
+                    <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, rgba(14,165,233,0.06) 0%, transparent 70%)" }} />
                 </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto page-enter">
-                    {/* EEG wave animation */}
-                    <div className="flex justify-center gap-1 items-end mb-8 h-16">
-                        {[10, 18, 28, 22, 14, 32, 24, 16, 20, 12, 26, 18, 30, 16, 8, 24, 20, 28, 14, 22].map((h, i) => (
-                            <div key={i} className="wave-bar" style={{ height: `${h}px`, animationDelay: `${(i * 60) % 800}ms` }} />
-                        ))}
-                    </div>
+                <div className="relative z-10 max-w-4xl mx-auto page-enter w-full">
 
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium mb-6">
-                        <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                    {/* 🩺 BCI badge */}
+                    <div className="health-badge mb-6">
+                        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
                         Brain-Computer Interface Platform
                     </div>
 
+                    {/* Headline */}
                     <h1 className="text-5xl sm:text-7xl font-black mb-6 leading-tight">
                         <span className="text-white">Emotion Recognition</span>
                         <br />
-                        <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
                             via EEG Brainwaves
                         </span>
                     </h1>
@@ -88,23 +106,28 @@ const LandingPage = () => {
                         Detect emotions using AI. A final-year BCI engineering project.
                     </p>
 
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <Link to="/register" className="btn-primary text-base px-8 py-4">
-                            🧠 Start Analyzing EEG
-                        </Link>
-                        <Link to="/login" className="btn-secondary text-base px-8 py-4">
-                            Sign In
-                        </Link>
+                    <div className="flex flex-wrap justify-center gap-4 mb-12">
+                        <Link to="/register" className="btn-primary text-base px-8 py-4">🧠 Start Analyzing EEG</Link>
+                        <Link to="/login" className="btn-secondary text-base px-8 py-4">Sign In</Link>
                     </div>
 
-                    {/* Stats */}
-                    <div className="flex flex-wrap justify-center gap-8 mt-14 text-center">
-                        {[["5", "Emotion Classes"], ["3", "ML Models"], ["5", "EEG Bands"], ["128Hz", "Sampling Rate"]].map(([val, label]) => (
-                            <div key={label}>
-                                <div className="text-3xl font-bold text-indigo-300">{val}</div>
-                                <div className="text-xs text-slate-500 mt-1">{label}</div>
-                            </div>
-                        ))}
+                    {/* 🌊 Live EEG Wave */}
+                    <div className="w-full max-w-3xl mx-auto mb-10 rounded-2xl overflow-hidden"
+                        style={{ border: "1px solid rgba(6,182,212,0.18)", background: "rgba(4,13,26,0.55)", backdropFilter: "blur(12px)" }}>
+                        <div className="flex items-center gap-2 px-4 pt-3 pb-1">
+                            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                            <span className="text-xs text-cyan-400/80 font-mono tracking-widest uppercase">Live EEG Monitor</span>
+                            <span className="ml-auto text-xs text-slate-600 font-mono">128 Hz · 4-channel</span>
+                        </div>
+                        <EEGWaveCanvas height={110} />
+                    </div>
+
+                    {/* 🔢 Animated Stats */}
+                    <div className="flex flex-wrap justify-center gap-10">
+                        <StatItem end={5} suffix="" label="Emotion Classes" />
+                        <StatItem end={3} suffix="" label="ML Models" />
+                        <StatItem end={5} suffix="" label="EEG Bands" />
+                        <StatItem end={128} suffix="Hz" label="Sampling Rate" />
                     </div>
                 </div>
             </section>
@@ -127,16 +150,16 @@ const LandingPage = () => {
             </section>
 
             {/* ── How It Works ────────────────────────────────── */}
-            <section className="py-24 px-6" style={{ background: "rgba(99,102,241,0.03)" }}>
+            <section className="py-24 px-6" style={{ background: "rgba(6,182,212,0.025)" }}>
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-white mb-4">How It Works</h2>
                         <p className="text-slate-400">The complete EEG emotion detection pipeline</p>
                     </div>
                     <div className="space-y-6">
-                        {steps.map((step, i) => (
+                        {steps.map((step) => (
                             <div key={step.num} className="glass-card p-6 flex gap-6 items-start">
-                                <div className="text-3xl font-black text-indigo-500/40 font-mono w-12 shrink-0">{step.num}</div>
+                                <div className="text-3xl font-black font-mono w-12 shrink-0" style={{ color: "rgba(6,182,212,0.35)" }}>{step.num}</div>
                                 <div>
                                     <h3 className="text-white font-semibold text-lg mb-1">{step.title}</h3>
                                     <p className="text-slate-400 text-sm leading-relaxed">{step.desc}</p>
@@ -181,7 +204,7 @@ const LandingPage = () => {
 
             {/* ── Footer ──────────────────────────────────────── */}
             <footer className="border-t border-white/5 py-8 px-6 text-center text-slate-500 text-sm">
-                <p>EmoHarmony © 2024 · EEG-based Emotion Recognition BCI Platform</p>
+                <p>EmoHarmony © {new Date().getFullYear()} · EEG-based Emotion Recognition BCI Platform</p>
             </footer>
         </div>
     );

@@ -125,7 +125,7 @@ const Dashboard = () => {
           <div className="glass-card p-6 col-span-1 lg:col-span-2">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">Recent Sessions</h2>
-              <Link to="/analytics" className="text-sm text-indigo-400 hover:text-indigo-300">View All →</Link>
+              <Link to="/analytics" className="text-sm text-cyan-400 hover:text-cyan-300">View All →</Link>
             </div>
             {loading ? (
               <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-14 bg-white/5 rounded-xl animate-pulse" />)}</div>
@@ -147,7 +147,7 @@ const Dashboard = () => {
                       <p className="text-xs text-slate-500">{new Date(r.createdAt).toLocaleDateString()} · {r.modelUsed}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="text-sm font-semibold text-indigo-300">{Math.round(r.confidence * 100)}%</div>
+                      <div className="text-sm font-semibold text-cyan-300">{Math.round(r.confidence * 100)}%</div>
                       <div className="text-xs text-slate-500">conf.</div>
                     </div>
                   </div>
@@ -162,10 +162,10 @@ const Dashboard = () => {
           {[
             { icon: "⬆️", label: "Upload EEG", to: "/upload" },
             { icon: "📈", label: "Analytics", to: "/analytics" },
-            { icon: "🗄️", label: "Dataset Repo", to: "/repository" },
+            { icon: "🕒", label: "Session History", to: "/analytics" },
             { icon: "👤", label: "My Profile", to: "/profile" },
           ].map((a) => (
-            <Link key={a.to} to={a.to} className="glass-card p-4 text-center hover:scale-105 transition-transform">
+            <Link key={a.label} to={a.to} className="glass-card p-4 text-center hover:scale-105 transition-transform">
               <div className="text-2xl mb-1">{a.icon}</div>
               <div className="text-sm font-medium text-slate-300">{a.label}</div>
             </Link>

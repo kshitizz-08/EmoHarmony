@@ -88,8 +88,8 @@ const Results = () => {
                         <button
                             onClick={() => exportResultAsPDF(result)}
                             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
-                                       bg-indigo-600/20 text-indigo-300 border border-indigo-500/30
-                                       hover:bg-indigo-600/40 hover:text-white transition-all"
+                                       bg-cyan-600/20 text-cyan-300 border border-cyan-500/30
+                                       hover:bg-cyan-600/40 hover:text-white transition-all"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -126,7 +126,7 @@ const Results = () => {
                             <div className="relative w-40 h-40 mx-auto">
                                 <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                                     <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
-                                    <circle cx="50" cy="50" r="42" fill="none" stroke="#6366f1" strokeWidth="10"
+                                    <circle cx="50" cy="50" r="42" fill="none" stroke="#0ea5e9" strokeWidth="10"
                                         strokeLinecap="round"
                                         strokeDasharray={`${2 * Math.PI * 42}`}
                                         strokeDashoffset={`${2 * Math.PI * 42 * (1 - result.confidence)}`}
@@ -138,8 +138,8 @@ const Results = () => {
                                 </div>
                             </div>
                             <div className="mt-3 text-sm text-slate-400">
-                                Model: <span className="text-indigo-300 font-medium">{result.modelUsed}</span> ·
-                                Time: <span className="text-indigo-300 font-medium">{result.processingTime}ms</span>
+                                Model: <span className="text-cyan-300 font-medium">{result.modelUsed}</span> ·
+                                Time: <span className="text-cyan-300 font-medium">{result.processingTime}ms</span>
                             </div>
                         </div>
                     </div>
@@ -179,7 +179,7 @@ const Results = () => {
                                 <PolarGrid stroke="rgba(255,255,255,0.1)" />
                                 <PolarAngleAxis dataKey="subject" tick={{ fill: "#94a3b8", fontSize: 11 }} />
                                 <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: "#64748b", fontSize: 9 }} />
-                                <Radar name="Score" dataKey="A" stroke="#6366f1" fill="#6366f1" fillOpacity={0.25} />
+                                <Radar name="Score" dataKey="A" stroke="#0ea5e9" fill="#06b6d4" fillOpacity={0.22} />
                                 <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [`${v}%`, "Probability"]} />
                             </RadarChart>
                         </ResponsiveContainer>

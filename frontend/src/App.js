@@ -11,7 +11,6 @@ import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
 import Results from "./pages/Results";
 import Analytics from "./pages/Analytics";
-import Repository from "./pages/Repository";
 import AdminPanel from "./pages/AdminPanel";
 import Profile from "./pages/Profile";
 
@@ -30,7 +29,6 @@ function App() {
           <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
           <Route path="/results/:id" element={<ProtectedRoute><Results /></ProtectedRoute>} />
           <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-          <Route path="/repository" element={<ProtectedRoute><Repository /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
           {/* Admin only */}

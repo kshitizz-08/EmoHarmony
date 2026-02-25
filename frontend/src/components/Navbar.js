@@ -21,7 +21,6 @@ const Navbar = () => {
         { to: "/dashboard", label: "Dashboard" },
         { to: "/upload", label: "Analyze EEG" },
         { to: "/analytics", label: "Analytics" },
-        { to: "/repository", label: "Datasets" },
     ];
 
     if (!user) return null;
@@ -51,8 +50,8 @@ const Navbar = () => {
                                 key={link.to}
                                 to={link.to}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === link.to
-                                        ? "text-indigo-400 bg-indigo-500/10"
-                                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                                    ? "text-cyan-400 bg-cyan-500/10"
+                                    : "text-slate-400 hover:text-white hover:bg-white/5"
                                     }`}
                             >
                                 {link.label}
@@ -62,8 +61,8 @@ const Navbar = () => {
                             <Link
                                 to="/admin"
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === "/admin"
-                                        ? "text-amber-400 bg-amber-500/10"
-                                        : "text-slate-400 hover:text-amber-400 hover:bg-amber-500/5"
+                                    ? "text-amber-400 bg-amber-500/10"
+                                    : "text-slate-400 hover:text-amber-400 hover:bg-amber-500/5"
                                     }`}
                             >
                                 Admin
@@ -74,7 +73,7 @@ const Navbar = () => {
                     {/* User Controls */}
                     <div className="flex items-center gap-3">
                         <Link to="/profile" className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/5 transition-all">
-                            <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-sm font-bold text-indigo-300">
+                            <div className="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-sm font-bold text-cyan-300">
                                 {user.name?.charAt(0).toUpperCase() || "U"}
                             </div>
                             <div className="hidden sm:block text-left">
