@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import EmotionBadge from "../components/EmotionBadge";
+import MusicRecommendations from "../components/MusicRecommendations";
+import { exportResultAsPDF } from "../utils/exportPDF";
 import api from "../services/api";
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -82,7 +84,19 @@ const Results = () => {
                         <h1 className="text-3xl font-bold text-white">EEG Analysis Results</h1>
                         <p className="text-slate-400 mt-1">{result.filename} · {new Date(result.createdAt).toLocaleString()}</p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
+                        <button
+                            onClick={() => exportResultAsPDF(result)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
+                                       bg-indigo-600/20 text-indigo-300 border border-indigo-500/30
+                                       hover:bg-indigo-600/40 hover:text-white transition-all"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Export PDF
+                        </button>
                         <Link to="/upload" className="btn-secondary text-sm">New Analysis</Link>
                     </div>
                 </div>
@@ -206,6 +220,10 @@ const Results = () => {
                         ))}
                     </div>
                 </div>
+
+                {/* Music Recommendations */}
+                <MusicRecommendations emotion={result.emotion} />
+
             </main>
         </div>
     );

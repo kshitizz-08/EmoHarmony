@@ -8,3 +8,5 @@ scipy
 joblib
 python-multipart
 pydantic
+xgboost
+lightgbm

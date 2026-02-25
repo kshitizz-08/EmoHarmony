@@ -181,7 +181,7 @@ const LandingPage = () => {
 
             {/* ── Footer ──────────────────────────────────────── */}
             <footer className="border-t border-white/5 py-8 px-6 text-center text-slate-500 text-sm">
-                <p>EmoHarmony © 2024 · Final Year Project · Computer Engineering · EEG-based Emotion Recognition BCI Platform</p>
+                <p>EmoHarmony © 2024 · EEG-based Emotion Recognition BCI Platform</p>
             </footer>
         </div>
     );

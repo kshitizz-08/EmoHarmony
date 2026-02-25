@@ -113,7 +113,7 @@ router.post("/upload", verifyToken, upload.single("file"), async (req, res) => {
       confidence: mlData.confidence,
       emotionScores: mlData.emotionScores,
       bandPowers: mlData.bandPowers,
-      modelUsed: modelType,
+      modelUsed: mlData.modelUsed || modelType,
       processingTime,
       interpretation: mlData.interpretation || "",
     });

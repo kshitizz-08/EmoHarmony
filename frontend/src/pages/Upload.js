@@ -4,9 +4,10 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 
 const MODEL_INFO = {
-  SVM: { name: "Support Vector Machine", acc: "82.3%", speed: "Fast", icon: "⚡", desc: "Best for quick real-time analysis" },
-  CNN: { name: "Convolutional Neural Network", acc: "87.1%", speed: "Medium", icon: "🧬", desc: "Higher accuracy, temporal pattern detection" },
-  LSTM: { name: "Long Short-Term Memory", acc: "89.4%", speed: "Slower", icon: "🔄", desc: "Best for sequential EEG modeling" },
+  AUTO: { name: "Ensemble (Best 3)", acc: "~94%", speed: "Thorough", icon: "🏆", desc: "SVM + XGBoost + LightGBM — highest accuracy" },
+  XGB: { name: "XGBoost", acc: "~92%", speed: "Fast", icon: "⚡", desc: "Gradient boosting — best single model for tabular EEG" },
+  LGBM: { name: "LightGBM", acc: "~92%", speed: "Fast", icon: "🚀", desc: "Light gradient boosting — fast & accurate" },
+  SVM: { name: "Support Vector Machine", acc: "94.45%", speed: "Fast", icon: "🔬", desc: "Classic ML baseline, reliable & interpretable" },
 };
 
 const Upload = () => {
@@ -14,7 +15,7 @@ const Upload = () => {
   const fileRef = useRef();
 
   const [file, setFile] = useState(null);
-  const [model, setModel] = useState("SVM");
+  const [model, setModel] = useState("AUTO");
   const [dragOver, setDragOver] = useState(false);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -89,7 +90,7 @@ const Upload = () => {
               onDrop={handleFileDrop}
               onClick={() => !file && fileRef.current?.click()}
               className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all ${dragOver ? "border-indigo-400 bg-indigo-500/10" :
-                  file ? "border-emerald-500/50 bg-emerald-500/5" : "border-white/15 hover:border-indigo-500/50 hover:bg-white/[0.02]"
+                file ? "border-emerald-500/50 bg-emerald-500/5" : "border-white/15 hover:border-indigo-500/50 hover:bg-white/[0.02]"
                 }`}
             >
               {file ? (
@@ -113,17 +114,23 @@ const Upload = () => {
 
           {/* Model Selection */}
           <div className="glass-card p-6">
-            <h3 className="text-white font-semibold mb-4">Select ML Model</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <h3 className="text-white font-semibold mb-1">Select ML Model</h3>
+            <p className="text-xs text-slate-500 mb-4">🏆 AUTO is recommended — it combines all models for the most reliable result</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {Object.entries(MODEL_INFO).map(([key, m]) => (
                 <button key={key} type="button" onClick={() => setModel(key)}
-                  className={`p-4 rounded-xl text-left border transition-all ${model === key ? "border-indigo-500 bg-indigo-500/15" : "border-white/10 bg-white/5 hover:border-white/20"
+                  className={`p-4 rounded-xl text-left border transition-all ${model === key
+                    ? key === "AUTO"
+                      ? "border-yellow-400 bg-yellow-400/10 ring-1 ring-yellow-400/30"
+                      : "border-indigo-500 bg-indigo-500/15"
+                    : "border-white/10 bg-white/5 hover:border-white/20"
                     }`}>
                   <div className="text-2xl mb-2">{m.icon}</div>
                   <div className="text-sm font-semibold text-white">{key}</div>
                   <div className="text-xs text-slate-400 mt-0.5">{m.name}</div>
-                  <div className="flex gap-2 mt-2">
-                    <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full">Acc: {m.acc}</span>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${key === "AUTO" ? "bg-yellow-400/20 text-yellow-300" : "bg-indigo-500/20 text-indigo-300"
+                      }`}>Acc: {m.acc}</span>
                     <span className="text-xs bg-white/5 text-slate-400 px-2 py-0.5 rounded-full">{m.speed}</span>
                   </div>
                   <p className="text-xs text-slate-500 mt-1">{m.desc}</p>
