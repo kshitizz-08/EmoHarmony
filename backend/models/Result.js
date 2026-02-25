@@ -52,7 +52,7 @@ const ResultSchema = new mongoose.Schema(
     // ML model used for prediction
     modelUsed: {
       type: String,
-      enum: ["SVM", "CNN", "LSTM", "ENSEMBLE", "XGB", "LGBM"],
+      enum: ["SVM", "CNN", "LSTM", "ENSEMBLE", "AUTO", "XGB", "LGBM"],
       default: "SVM",
     },
     // Processing time in milliseconds
