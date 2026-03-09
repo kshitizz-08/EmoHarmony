@@ -74,7 +74,7 @@ const Dashboard = () => {
                 { label: "Stress Index", value: `${stats?.stressIndex || 0}%`, icon: "📈", bg: "#fef3c7" },
                 { label: "Calmness Ratio", value: `${stats?.calmnessRatio || 0}%`, icon: "😌", bg: "#f0fdfa" },
               ].map((s) => (
-                <div key={s.label} style={{ background: "#fff", border: "1px solid var(--border)", borderRadius: 10, padding: 20, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
+                <div key={s.label} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 10, padding: 20, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
                   <div style={{ width: 34, height: 34, borderRadius: 8, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, marginBottom: 12 }}>{s.icon}</div>
                   <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text-primary)", lineHeight: 1.1, marginBottom: 4 }}>{s.value}</div>
                   <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</div>
@@ -104,7 +104,7 @@ const Dashboard = () => {
                         </Pie>
                         <Tooltip
                           formatter={(v) => [`${v} sessions`, ""]}
-                          contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12 }}
+                          contentStyle={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
                         />
                       </PieChart>
                     </ResponsiveContainer>

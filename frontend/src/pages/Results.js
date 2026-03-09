@@ -103,7 +103,7 @@ const ShapExplanation = ({ shapData, emotion }) => {
                     <XAxis type="number" tick={{ fill: "#7fa891", fontSize: 11 }} axisLine={false} tickLine={false} />
                     <YAxis type="category" dataKey="name" width={160} tick={{ fill: "#a7f3d0", fontSize: 11 }} axisLine={false} tickLine={false} />
                     <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [v.toFixed(4), "SHAP value"]} />
-                    <ReferenceLine x={0} stroke="rgba(255,255,255,0.15)" />
+                    <ReferenceLine x={0} stroke="var(--border)" />
                     <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={22}>
                         {sorted.map((entry) => (
                             <Cell key={entry.name} fill={entry.value >= 0 ? emotionColor : "#ef4444"} fillOpacity={0.85} />
@@ -176,7 +176,7 @@ const EmotionTimeline = ({ timeline }) => {
                             <stop offset="95%" stopColor={areaColor} stopOpacity={0.03} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                     <XAxis dataKey="time_s" tick={{ fill: "#7fa891", fontSize: 11 }} tickFormatter={(v) => `${v}s`} />
                     <YAxis domain={[0.5, 5.5]} ticks={[1, 2, 3, 4, 5]} tick={<YAxisTick />} width={58} />
                     <Tooltip content={<CustomTooltip />} />
@@ -216,8 +216,8 @@ const Results = () => {
     }, [id]);
 
     if (loading) return (
-        <div className="min-h-screen bg-neuro"><Navbar />
-            <div className="flex items-center justify-center h-96">
+        <div className="app-shell"><Navbar />
+            <div className="app-main flex items-center justify-center h-96">
                 <div className="text-center">
                     <div className="flex gap-1 justify-center mb-4">{[...Array(8)].map((_, i) => <span key={i} className="wave-bar" />)}</div>
                     <p style={{ color: "#7fa891" }}>Loading results...</p>
@@ -227,8 +227,8 @@ const Results = () => {
     );
 
     if (error || !result) return (
-        <div className="min-h-screen bg-neuro"><Navbar />
-            <div className="flex flex-col items-center justify-center h-96 text-center">
+        <div className="app-shell"><Navbar />
+            <div className="app-main flex flex-col items-center justify-center h-96 text-center">
                 <div className="text-5xl mb-4">❌</div>
                 <p style={{ color: "#7fa891" }}>{error || "Result not found"}</p>
                 <Link to="/dashboard" className="btn-primary mt-4">Back to Dashboard</Link>
@@ -251,156 +251,158 @@ const Results = () => {
     const confPct = Math.round(result.confidence * 100);
 
     return (
-        <div className="min-h-screen bg-neuro">
+        <div className="app-shell">
             <Navbar />
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 page-enter">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
-                    <div>
-                        <button onClick={() => navigate(-1)} className="text-sm mb-3 flex items-center gap-1 hover:opacity-80 transition-opacity" style={{ color: "#7fa891" }}>← Back</button>
-                        <h1 className="text-3xl font-bold text-white font-['Nunito']">EEG Analysis Results</h1>
-                        <p className="mt-1" style={{ color: "#7fa891" }}>{result.filename} · {new Date(result.createdAt).toLocaleString()}</p>
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                        <button onClick={() => exportResultAsPDF(result)}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                            style={{ background: "rgba(16,185,129,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)" }}>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Export PDF
-                        </button>
-                        <Link to="/upload" className="btn-secondary text-sm">New Analysis</Link>
-                    </div>
-                </div>
-
-                {/* Primary Result Card */}
-                <div className="glass-card p-8 mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                        <div className="text-center md:text-left">
-                            <p className="text-sm font-medium uppercase tracking-wider mb-3" style={{ color: "#7fa891" }}>Detected Emotional State</p>
-                            <div className="flex items-center gap-4 justify-center md:justify-start mb-4">
-                                <span className="text-7xl">
-                                    {result.emotion === "Happy" ? "😊" : result.emotion === "Calm" ? "😌" : result.emotion === "Sad" ? "😢" : result.emotion === "Stress" ? "😰" : "😠"}
-                                </span>
-                                <div>
-                                    <h2 className="text-5xl font-black text-white font-['Nunito']">{result.emotion}</h2>
-                                    <EmotionBadge emotion={result.emotion} size="md" showIcon={false} />
-                                </div>
-                            </div>
-                            <p className="text-sm leading-relaxed" style={{ color: "#7fa891" }}>{result.interpretation}</p>
+            <div className="app-main">
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 page-enter">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
+                        <div>
+                            <button onClick={() => navigate(-1)} className="text-sm mb-3 flex items-center gap-1 hover:opacity-80 transition-opacity" style={{ color: "#7fa891" }}>← Back</button>
+                            <h1 className="text-3xl font-bold text-white font-['Nunito']">EEG Analysis Results</h1>
+                            <p className="mt-1" style={{ color: "#7fa891" }}>{result.filename} · {new Date(result.createdAt).toLocaleString()}</p>
                         </div>
-
-                        <div className="text-center">
-                            <p className="text-sm font-medium uppercase tracking-wider mb-4" style={{ color: "#7fa891" }}>Model Confidence</p>
-                            <div className="relative w-40 h-40 mx-auto">
-                                <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                                    <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
-                                    <circle cx="50" cy="50" r="42" fill="none" stroke="#10b981" strokeWidth="10"
-                                        strokeLinecap="round"
-                                        strokeDasharray={`${2 * Math.PI * 42}`}
-                                        strokeDashoffset={`${2 * Math.PI * 42 * (1 - result.confidence)}`}
-                                        style={{ transition: "stroke-dashoffset 1s ease-out" }} />
+                        <div className="flex gap-2 flex-wrap">
+                            <button onClick={() => exportResultAsPDF(result)}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                                style={{ background: "rgba(16,185,129,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)" }}>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-3xl font-black text-white font-['Nunito']">{confPct}%</span>
-                                    <span className="text-xs" style={{ color: "#5a8a72" }}>confidence</span>
+                                Export PDF
+                            </button>
+                            <Link to="/upload" className="btn-secondary text-sm">New Analysis</Link>
+                        </div>
+                    </div>
+
+                    {/* Primary Result Card */}
+                    <div className="glass-card p-8 mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div className="text-center md:text-left">
+                                <p className="text-sm font-medium uppercase tracking-wider mb-3" style={{ color: "#7fa891" }}>Detected Emotional State</p>
+                                <div className="flex items-center gap-4 justify-center md:justify-start mb-4">
+                                    <span className="text-7xl">
+                                        {result.emotion === "Happy" ? "😊" : result.emotion === "Calm" ? "😌" : result.emotion === "Sad" ? "😢" : result.emotion === "Stress" ? "😰" : "😠"}
+                                    </span>
+                                    <div>
+                                        <h2 className="text-5xl font-black text-white font-['Nunito']">{result.emotion}</h2>
+                                        <EmotionBadge emotion={result.emotion} size="md" showIcon={false} />
+                                    </div>
                                 </div>
+                                <p className="text-sm leading-relaxed" style={{ color: "#7fa891" }}>{result.interpretation}</p>
                             </div>
-                            <div className="mt-3 text-sm" style={{ color: "#7fa891" }}>
-                                Model: <span className="font-medium" style={{ color: "#34d399" }}>{result.modelUsed}</span> ·{" "}
-                                Time: <span className="font-medium" style={{ color: "#34d399" }}>{result.processingTime}ms</span>
+
+                            <div className="text-center">
+                                <p className="text-sm font-medium uppercase tracking-wider mb-4" style={{ color: "#7fa891" }}>Model Confidence</p>
+                                <div className="relative w-40 h-40 mx-auto">
+                                    <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                                        <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" strokeWidth="10" />
+                                        <circle cx="50" cy="50" r="42" fill="none" stroke="#10b981" strokeWidth="10"
+                                            strokeLinecap="round"
+                                            strokeDasharray={`${2 * Math.PI * 42}`}
+                                            strokeDashoffset={`${2 * Math.PI * 42 * (1 - result.confidence)}`}
+                                            style={{ transition: "stroke-dashoffset 1s ease-out" }} />
+                                    </svg>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="text-3xl font-black text-white font-['Nunito']">{confPct}%</span>
+                                        <span className="text-xs" style={{ color: "#5a8a72" }}>confidence</span>
+                                    </div>
+                                </div>
+                                <div className="mt-3 text-sm" style={{ color: "#7fa891" }}>
+                                    Model: <span className="font-medium" style={{ color: "#34d399" }}>{result.modelUsed}</span> ·{" "}
+                                    Time: <span className="font-medium" style={{ color: "#34d399" }}>{result.processingTime}ms</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* ── Brainwave Guide ──────────────────────────────────────────── */}
-                <BrainwaveGuide />
+                    {/* ── Brainwave Guide ──────────────────────────────────────────── */}
+                    <BrainwaveGuide />
 
-                {/* ── NEW: Emotion Timeline ────────────────────────────────────── */}
-                <EmotionTimeline timeline={result.emotionTimeline} />
+                    {/* ── NEW: Emotion Timeline ────────────────────────────────────── */}
+                    <EmotionTimeline timeline={result.emotionTimeline} />
 
-                {/* Charts row */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    <div className="glass-card p-6">
-                        <h2 className="text-lg font-semibold text-white mb-2 font-['Nunito']">EEG Brainwave Band Powers</h2>
-                        <p className="text-xs mb-4" style={{ color: "#5a8a72" }}>Power Spectral Density (μV²/Hz) via Welch's method</p>
-                        <ResponsiveContainer width="100%" height={220}>
-                            <BarChart data={bandData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                                <XAxis dataKey="band" tick={{ fill: "#7fa891", fontSize: 12 }} />
-                                <YAxis tick={{ fill: "#7fa891", fontSize: 11 }} />
-                                <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [`${v} μV²/Hz`, "Power"]} />
-                                <Bar dataKey="power" radius={[6, 6, 0, 0]}>
-                                    {bandData.map((entry) => <Cell key={entry.band} fill={entry.fill} />)}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                        <div className="flex flex-wrap gap-2 mt-3">
-                            {bandData.map((b) => (
-                                <span key={b.band} className="text-xs flex items-center gap-1" style={{ color: "#7fa891" }}>
-                                    <span className="w-2 h-2 rounded-full" style={{ background: b.fill }} /> {b.band}: {b.power}
-                                </span>
+                    {/* Charts row */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div className="glass-card p-6">
+                            <h2 className="text-lg font-semibold text-white mb-2 font-['Nunito']">EEG Brainwave Band Powers</h2>
+                            <p className="text-xs mb-4" style={{ color: "#5a8a72" }}>Power Spectral Density (μV²/Hz) via Welch's method</p>
+                            <ResponsiveContainer width="100%" height={220}>
+                                <BarChart data={bandData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                                    <XAxis dataKey="band" tick={{ fill: "#7fa891", fontSize: 12 }} />
+                                    <YAxis tick={{ fill: "#7fa891", fontSize: 11 }} />
+                                    <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [`${v} μV²/Hz`, "Power"]} />
+                                    <Bar dataKey="power" radius={[6, 6, 0, 0]}>
+                                        {bandData.map((entry) => <Cell key={entry.band} fill={entry.fill} />)}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                            <div className="flex flex-wrap gap-2 mt-3">
+                                {bandData.map((b) => (
+                                    <span key={b.band} className="text-xs flex items-center gap-1" style={{ color: "#7fa891" }}>
+                                        <span className="w-2 h-2 rounded-full" style={{ background: b.fill }} /> {b.band}: {b.power}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="glass-card p-6">
+                            <h2 className="text-lg font-semibold text-white mb-2 font-['Nunito']">Emotion Probability Radar</h2>
+                            <p className="text-xs mb-4" style={{ color: "#5a8a72" }}>Per-class confidence scores from the classifier</p>
+                            <ResponsiveContainer width="100%" height={220}>
+                                <RadarChart data={radarData}>
+                                    <PolarGrid stroke="var(--border)" />
+                                    <PolarAngleAxis dataKey="subject" tick={{ fill: "#7fa891", fontSize: 11 }} />
+                                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: "#5a8a72", fontSize: 9 }} />
+                                    <Radar name="Score" dataKey="A" stroke="#10b981" fill="#34d399" fillOpacity={0.22} />
+                                    <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [`${v}%`, "Probability"]} />
+                                </RadarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+
+                    {/* Emotion Score Bars */}
+                    <div className="glass-card p-6 mb-6">
+                        <h2 className="text-lg font-semibold text-white mb-4 font-['Nunito']">Per-Emotion Confidence Breakdown</h2>
+                        <div className="space-y-3">
+                            {scoreData.map(({ emotion, score }) => (
+                                <div key={emotion} className="flex items-center gap-4">
+                                    <EmotionBadge emotion={emotion} size="sm" />
+                                    <div className="flex-1 progress-bar">
+                                        <div className="progress-fill" style={{ width: `${score}%`, background: EMOTION_COLORS[emotion] || "#10b981" }} />
+                                    </div>
+                                    <span className="text-sm font-semibold text-white w-12 text-right">{score}%</span>
+                                </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="glass-card p-6">
-                        <h2 className="text-lg font-semibold text-white mb-2 font-['Nunito']">Emotion Probability Radar</h2>
-                        <p className="text-xs mb-4" style={{ color: "#5a8a72" }}>Per-class confidence scores from the classifier</p>
-                        <ResponsiveContainer width="100%" height={220}>
-                            <RadarChart data={radarData}>
-                                <PolarGrid stroke="rgba(255,255,255,0.08)" />
-                                <PolarAngleAxis dataKey="subject" tick={{ fill: "#7fa891", fontSize: 11 }} />
-                                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: "#5a8a72", fontSize: 9 }} />
-                                <Radar name="Score" dataKey="A" stroke="#10b981" fill="#34d399" fillOpacity={0.22} />
-                                <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [`${v}%`, "Probability"]} />
-                            </RadarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
+                    {/* ── NEW: SHAP Explanation ────────────────────────────────────── */}
+                    <ShapExplanation shapData={result.shapExplanation} emotion={result.emotion} />
 
-                {/* Emotion Score Bars */}
-                <div className="glass-card p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-white mb-4 font-['Nunito']">Per-Emotion Confidence Breakdown</h2>
-                    <div className="space-y-3">
-                        {scoreData.map(({ emotion, score }) => (
-                            <div key={emotion} className="flex items-center gap-4">
-                                <EmotionBadge emotion={emotion} size="sm" />
-                                <div className="flex-1 progress-bar">
-                                    <div className="progress-fill" style={{ width: `${score}%`, background: EMOTION_COLORS[emotion] || "#10b981" }} />
+                    {/* Clinical Interpretation */}
+                    <div className="glass-card p-6 mb-6">
+                        <h2 className="text-lg font-semibold text-white mb-3 font-['Nunito']">🧬 Clinical Interpretation</h2>
+                        <p className="leading-relaxed" style={{ color: "#a7f3d0" }}>{result.interpretation || "No interpretation available."}</p>
+                        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {[
+                                { label: "Primary Emotion", val: result.emotion },
+                                { label: "Model Used", val: result.modelUsed },
+                                { label: "Confidence", val: `${confPct}%` },
+                                { label: "Processing Time", val: `${result.processingTime}ms` },
+                            ].map(({ label, val }) => (
+                                <div key={label} className="glass p-3 text-center rounded-xl">
+                                    <div className="text-white font-semibold font-['Nunito']">{val}</div>
+                                    <div className="text-xs mt-0.5" style={{ color: "#5a8a72" }}>{label}</div>
                                 </div>
-                                <span className="text-sm font-semibold text-white w-12 text-right">{score}%</span>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-                {/* ── NEW: SHAP Explanation ────────────────────────────────────── */}
-                <ShapExplanation shapData={result.shapExplanation} emotion={result.emotion} />
-
-                {/* Clinical Interpretation */}
-                <div className="glass-card p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-white mb-3 font-['Nunito']">🧬 Clinical Interpretation</h2>
-                    <p className="leading-relaxed" style={{ color: "#a7f3d0" }}>{result.interpretation || "No interpretation available."}</p>
-                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        {[
-                            { label: "Primary Emotion", val: result.emotion },
-                            { label: "Model Used", val: result.modelUsed },
-                            { label: "Confidence", val: `${confPct}%` },
-                            { label: "Processing Time", val: `${result.processingTime}ms` },
-                        ].map(({ label, val }) => (
-                            <div key={label} className="glass p-3 text-center rounded-xl">
-                                <div className="text-white font-semibold font-['Nunito']">{val}</div>
-                                <div className="text-xs mt-0.5" style={{ color: "#5a8a72" }}>{label}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Music Recommendations */}
-                <MusicRecommendations emotion={result.emotion} />
-            </main>
+                    {/* Music Recommendations */}
+                    <MusicRecommendations emotion={result.emotion} />
+                </main>
+            </div>
         </div>
     );
 };

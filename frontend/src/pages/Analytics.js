@@ -11,8 +11,8 @@ import {
 const EMOTION_COLORS = { Happy: "#f59e0b", Sad: "#3b82f6", Angry: "#ef4444", Calm: "#0d9488", Stress: "#8b5cf6" };
 
 const CHART_TOOLTIP = {
-    contentStyle: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" },
-    labelStyle: { color: "#475569" }, itemStyle: { color: "#0f172a" },
+    contentStyle: { background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" },
+    labelStyle: { color: "var(--text-secondary)" }, itemStyle: { color: "var(--text-primary)" },
 };
 
 const Analytics = () => {
@@ -70,7 +70,7 @@ const Analytics = () => {
                                     { label: "Calmness Ratio", val: `${data?.calmnessRatio || 0}%`, icon: "😌", bg: "#f0fdfa" },
                                     { label: "Recent Sessions", val: data?.recentSessions?.length || 0, icon: "🕐", bg: "#fffbeb" },
                                 ].map(({ label, val, icon, bg }) => (
-                                    <div key={label} style={{ background: "#fff", border: "1px solid var(--border)", borderRadius: 10, padding: 20, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
+                                    <div key={label} style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 10, padding: 20, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
                                         <div style={{ width: 34, height: 34, borderRadius: 8, background: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, marginBottom: 12 }}>{icon}</div>
                                         <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text-primary)", lineHeight: 1.1, marginBottom: 4 }}>{val}</div>
                                         <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
@@ -90,7 +90,7 @@ const Analytics = () => {
                                         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
                                             <div style={{ position: "relative", width: 80, height: 80, flexShrink: 0 }}>
                                                 <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
-                                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+                                                    <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" strokeWidth="12" />
                                                     <circle cx="50" cy="50" r="40" fill="none" stroke={color} strokeWidth="12"
                                                         strokeLinecap="round"
                                                         strokeDasharray={`${2 * Math.PI * 40}`}
@@ -115,7 +115,7 @@ const Analytics = () => {
                                         {weeklyPoints.some(w => w.total > 0) ? (
                                             <ResponsiveContainer width="100%" height={200}>
                                                 <LineChart data={weeklyPoints}>
-                                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                                                     <XAxis dataKey="day" tick={{ fill: "#94a3b8", fontSize: 11 }} />
                                                     <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} allowDecimals={false} />
                                                     <Tooltip {...CHART_TOOLTIP} />

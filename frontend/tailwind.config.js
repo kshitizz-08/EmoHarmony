@@ -29,7 +29,7 @@ export default {
                 card: "0 4px 24px rgba(0,0,0,0.4)",
             },
             backgroundImage: {
-                neuro: "linear-gradient(135deg, #0a0b1e 0%, #1a1f5e 50%, #2d1b69 100%)",
+                // Removed fixed neuro gradient so CSS variables in index.css take effect
             },
             animation: {
                 wave: "wave 1.2s ease-in-out infinite",

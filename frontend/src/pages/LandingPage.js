@@ -24,10 +24,10 @@ const LandingPage = () => {
     const navigate = useNavigate();
 
     return (
-        <div style={{ minHeight: "100vh", background: "#fff", color: "var(--text-primary)", fontFamily: "Inter, sans-serif" }}>
+        <div style={{ minHeight: "100vh", background: "var(--bg-page)", color: "var(--text-primary)", fontFamily: "Inter, sans-serif" }}>
 
             {/* ── Header ── */}
-            <header style={{ borderBottom: "1px solid var(--border)", background: "#fff", position: "sticky", top: 0, zIndex: 50 }}>
+            <header style={{ borderBottom: "1px solid var(--border)", background: "var(--bg-surface)", position: "sticky", top: 0, zIndex: 50 }}>
                 <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
                         <div style={{ width: 28, height: 28, background: "var(--accent)", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center" }}>
