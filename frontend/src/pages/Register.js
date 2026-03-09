@@ -5,102 +5,97 @@ import { useAuth } from "../contexts/AuthContext";
 const Register = () => {
     const { register } = useAuth();
     const navigate = useNavigate();
-
     const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "", role: "user" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        if (form.password !== form.confirm) {
-            setError("Passwords do not match");
-            return;
-        }
-        if (form.password.length < 6) {
-            setError("Password must be at least 6 characters");
-            return;
-        }
+        if (form.password !== form.confirm) { setError("Passwords do not match"); return; }
+        if (form.password.length < 6) { setError("Password must be at least 6 characters"); return; }
         setLoading(true);
         try {
             await register(form.name, form.email, form.password, form.role);
             navigate("/dashboard");
         } catch (err) {
             setError(err.response?.data?.error || "Registration failed. Please try again.");
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     };
 
     return (
-        <div className="min-h-screen bg-neuro flex items-center justify-center px-4 py-12">
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full"
-                    style={{ background: "radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)" }} />
-            </div>
+        <div style={{ minHeight: "100vh", background: "var(--bg-page)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+            <div style={{ width: "100%", maxWidth: 400 }}>
 
-            <div className="w-full max-w-md relative z-10 page-enter">
                 {/* Logo */}
-                <div className="text-center mb-8">
-                    <div className="flex justify-center gap-0.5 items-end h-12 mb-3">
-                        {[8, 14, 20, 16, 10, 24, 18, 12, 20, 16].map((h, i) => (
-                            <div key={i} className="wave-bar" style={{ height: `${h}px`, animationDelay: `${i * 100}ms` }} />
-                        ))}
+                <div style={{ textAlign: "center", marginBottom: 24 }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                        <div style={{ width: 34, height: 34, background: "var(--accent)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="white">
+                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                            </svg>
+                        </div>
+                        <span style={{ fontWeight: 800, fontSize: 19, color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
+                            Emo<span style={{ color: "var(--accent)" }}>Harmony</span>
+                        </span>
                     </div>
-                    <h1 className="text-3xl font-bold"><span className="text-white">Emo</span><span className="text-indigo-400">Harmony</span></h1>
-                    <p className="text-slate-500 text-sm mt-1">Create your account</p>
+                    <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Create your account</p>
                 </div>
 
-                <div className="glass-card p-8">
-                    <h2 className="text-xl font-semibold text-white mb-1">Get Started</h2>
-                    <p className="text-slate-400 text-sm mb-6">Create your EmoHarmony account</p>
+                <div className="card" style={{ padding: "24px 26px" }}>
+                    <h1 style={{ fontSize: 17, fontWeight: 700, color: "var(--text-primary)", marginBottom: 18 }}>Get started</h1>
 
-                    {error && (
-                        <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-                            ⚠️ {error}
-                        </div>
-                    )}
+                    {error && <div className="alert-error" style={{ marginBottom: 14 }}>⚠️ {error}</div>}
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
-                            <input type="text" className="input-field" placeholder="Dr. Jane Smith"
-                                value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                            <label className="input-label">Full name</label>
+                            <input className="input-field" placeholder="John Doe" value={form.name}
+                                onChange={e => set("name", e.target.value)} required />
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-                            <input type="email" className="input-field" placeholder="you@example.com"
-                                value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+                            <label className="input-label">Email address</label>
+                            <input type="email" className="input-field" placeholder="you@example.com" value={form.email}
+                                onChange={e => set("email", e.target.value)} required />
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">Role</label>
-                            <select className="input-field" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-                                <option value="user">General User</option>
+                            <label className="input-label">Password</label>
+                            <input type="password" className="input-field" placeholder="Min. 6 characters" value={form.password}
+                                onChange={e => set("password", e.target.value)} required />
+                        </div>
+
+                        <div>
+                            <label className="input-label">Confirm password</label>
+                            <input type="password" className="input-field" placeholder="Repeat password" value={form.confirm}
+                                onChange={e => set("confirm", e.target.value)} required
+                                style={{ borderColor: form.confirm && form.confirm !== form.password ? "#fca5a5" : "" }} />
+                        </div>
+
+                        <div>
+                            <label className="input-label">Account type</label>
+                            <select className="input-field" value={form.role} onChange={e => set("role", e.target.value)}>
+                                <option value="user">User (student / patient)</option>
                                 <option value="researcher">Researcher</option>
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
-                            <input type="password" className="input-field" placeholder="Min. 6 characters"
-                                value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">Confirm Password</label>
-                            <input type="password" className="input-field" placeholder="Repeat password"
-                                value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} required />
-                        </div>
 
-                        <button type="submit" disabled={loading} className="btn-primary w-full mt-2 flex items-center justify-center gap-2">
-                            {loading ? (
-                                <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Creating account...</>
-                            ) : "Create Account"}
+                        <button type="submit" className="btn-primary" style={{ width: "100%", justifyContent: "center", marginTop: 4 }} disabled={loading}>
+                            {loading ? "Creating account…" : "Create account"}
                         </button>
                     </form>
 
-                    <div className="mt-6 text-center text-sm">
-                        <span className="text-slate-500">Already have an account? </span>
-                        <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">Sign In</Link>
+                    <div style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: "var(--text-muted)" }}>
+                        Already have an account?{" "}
+                        <Link to="/login" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Sign in</Link>
                     </div>
+                </div>
+
+                <div style={{ textAlign: "center", marginTop: 14 }}>
+                    <Link to="/" style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none" }}>← Back to home</Link>
                 </div>
             </div>
         </div>

@@ -48,6 +48,16 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    passwordResetToken: {
+      type: String,
+      default: null,
+      select: false,
+    },
+    passwordResetExpires: {
+      type: Date,
+      default: null,
+      select: false,
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt automatically

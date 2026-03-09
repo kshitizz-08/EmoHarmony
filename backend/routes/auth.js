@@ -1,7 +1,10 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../models/User");
 const { verifyToken } = require("../middleware/auth");
+const { sendPasswordResetEmail,
+  sendWelcomeEmail } = require("../services/emailService");
 
 const JWT_SECRET = process.env.JWT_SECRET || "emoharmony_secret";
 const JWT_EXPIRES = "7d";
@@ -31,6 +34,8 @@ router.post("/register", async (req, res) => {
       role: role === "researcher" ? "researcher" : "user",
     });
     const token = signToken(user._id);
+    // Send welcome email (non-blocking — don't await so it doesn't slow down registration)
+    sendWelcomeEmail(user).catch((e) => console.error("Welcome email failed:", e.message));
     res.status(201).json({ token, user: user.toPublic() });
   } catch (err) {
     console.error("Register error:", err);
@@ -123,6 +128,75 @@ router.put("/profile", verifyToken, async (req, res) => {
     res.json({ user: user.toPublic() });
   } catch (err) {
     res.status(500).json({ error: "Profile update failed" });
+  }
+});
+
+/**
+ * POST /api/auth/forgot-password
+ * Send a password-reset link to the user's email
+ */
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const user = await User.findOne({ email: email.toLowerCase() })
+      .select("+passwordResetToken +passwordResetExpires");
+
+    // Always return 200 — don't reveal whether email exists (security best practice)
+    if (!user) return res.json({ message: "If that email is registered, a reset link has been sent." });
+
+    // Generate secure random token
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+
+    user.passwordResetToken = hashedToken;
+    user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    await user.save({ validateBeforeSave: false });
+
+    // Send email with raw (unhashed) token in URL
+    await sendPasswordResetEmail(user, rawToken);
+
+    res.json({ message: "If that email is registered, a reset link has been sent." });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ error: "Could not process request. Try again later." });
+  }
+});
+
+/**
+ * POST /api/auth/reset-password/:token
+ * Validate token + update password
+ */
+router.post("/reset-password/:token", async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password || password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters" });
+    }
+
+    // Hash the URL token to compare with stored hash
+    const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: new Date() },   // not expired
+    }).select("+passwordResetToken +passwordResetExpires");
+
+    if (!user) {
+      return res.status(400).json({ error: "Reset link is invalid or has expired. Please request a new one." });
+    }
+
+    // Update password — pre-save hook will hash it
+    user.password = password;
+    user.passwordResetToken = null;
+    user.passwordResetExpires = null;
+    await user.save();
+
+    res.json({ message: "Password reset successful. You can now sign in." });
+  } catch (err) {
+    console.error("Reset password error:", err);
+    res.status(500).json({ error: "Password reset failed. Try again." });
   }
 });
 

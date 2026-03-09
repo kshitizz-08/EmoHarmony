@@ -5,10 +5,10 @@ import { useAuth } from "../contexts/AuthContext";
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPw, setShowPw] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,90 +19,71 @@ const Login = () => {
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-neuro flex items-center justify-center px-4">
-      {/* Background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)" }} />
-      </div>
+    <div style={{ minHeight: "100vh", background: "var(--bg-page)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div style={{ width: "100%", maxWidth: 380 }}>
 
-      <div className="w-full max-w-md relative z-10 page-enter">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center gap-0.5 items-end h-12 mb-3">
-            {[8, 14, 20, 16, 10, 24, 18, 12, 20, 16].map((h, i) => (
-              <div key={i} className="wave-bar" style={{ height: `${h}px`, animationDelay: `${i * 100}ms` }} />
-            ))}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 36, height: 36, background: "var(--accent)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="white">
+                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+              </svg>
+            </div>
+            <span style={{ fontWeight: 800, fontSize: 20, color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
+              Emo<span style={{ color: "var(--accent)" }}>Harmony</span>
+            </span>
           </div>
-          <h1 className="text-3xl font-bold"><span className="text-white">Emo</span><span className="text-indigo-400">Harmony</span></h1>
-          <p className="text-slate-500 text-sm mt-1">EEG Emotion Recognition Platform</p>
+          <p style={{ fontSize: 13, color: "var(--text-muted)" }}>EEG Emotion Recognition Platform</p>
         </div>
 
         {/* Card */}
-        <div className="glass-card p-8">
-          <h2 className="text-xl font-semibold text-white mb-1">Welcome back</h2>
-          <p className="text-slate-400 text-sm mb-6">Sign in to your account</p>
+        <div className="card" style={{ padding: "28px 28px" }}>
+          <h1 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>Welcome back</h1>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 22 }}>Sign in to your account</p>
 
-          {error && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-              ⚠️ {error}
-            </div>
-          )}
+          {error && <div className="alert-error" style={{ marginBottom: 16 }}>⚠️ {error}</div>}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-              <input
-                type="email"
-                className="input-field"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
-              <input
-                type="password"
-                className="input-field"
-                placeholder="••••••••"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                required
-              />
+              <label className="input-label">Email address</label>
+              <input type="email" className="input-field" placeholder="you@example.com"
+                value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full mt-2 flex items-center justify-center gap-2">
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                "Sign In"
-              )}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label className="input-label" style={{ marginBottom: 0 }}>Password</label>
+                <Link to="/forgot-password" style={{ fontSize: 12, color: "var(--accent)", textDecoration: "none", fontWeight: 500 }}>Forgot password?</Link>
+              </div>
+              <div style={{ position: "relative" }}>
+                <input type={showPw ? "text" : "password"} className="input-field" placeholder="••••••••"
+                  value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  style={{ paddingRight: 36 }} required />
+                <button type="button" onClick={() => setShowPw(p => !p)}
+                  style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", fontSize: 13 }}>
+                  {showPw ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" className="btn-primary" style={{ width: "100%", justifyContent: "center", marginTop: 4 }} disabled={loading}>
+              {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm">
-            <span className="text-slate-500">Don't have an account? </span>
-            <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-medium">Register</Link>
-          </div>
-          <div className="mt-2 text-center text-sm">
-            <Link to="/" className="text-slate-500 hover:text-slate-400">← Back to Home</Link>
+          <div style={{ textAlign: "center", marginTop: 18, fontSize: 13, color: "var(--text-muted)" }}>
+            Don't have an account?{" "}
+            <Link to="/register" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Sign up</Link>
           </div>
         </div>
 
-        {/* Demo hint */}
-        <div className="mt-4 glass p-3 text-center text-xs text-slate-500">
-          First time? <Link to="/register" className="text-indigo-400">Create an account</Link> to start analyzing EEG data
+        <div style={{ textAlign: "center", marginTop: 16 }}>
+          <Link to="/" style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none" }}>← Back to home</Link>
         </div>
       </div>
     </div>

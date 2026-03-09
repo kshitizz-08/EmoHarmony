@@ -4,11 +4,9 @@ EmoHarmony ML Service - Model Engine
 Loads pre-trained models from disk (.pkl files) and runs
 emotion prediction from EEG features.
 
-Models trained by: python train_model.py
-  - models/svm_model.pkl    → SVM (RBF kernel) Pipeline
-  - models/rf_model.pkl     → Random Forest Pipeline
-  - models/xgb_model.pkl    → XGBoost bundle {model, scaler, le}
-  - models/lgbm_model.pkl   → LightGBM bundle {model, scaler}
+Models trained by:
+  python train_model.py   → svm_model.pkl, rf_model.pkl, xgb_model.pkl, lgbm_model.pkl
+  python train_lstm.py    → lstm_model.pt  (real Bidirectional LSTM on raw EEG)
 
 Falls back to rule-based heuristics if model files are not found.
 """
@@ -18,6 +16,9 @@ import warnings
 import joblib
 import numpy as np
 from typing import Dict, Tuple
+
+# Real LSTM (optional — only loaded if lstm_model.pt exists)
+from lstm_model import get_lstm_predictor
 
 # Suppress LightGBM "feature names" warning that fires when passing numpy arrays
 # to a model trained with string feature names (harmless, but noisy in logs)
@@ -129,20 +130,27 @@ def predict_with_cnn(features: np.ndarray,
 
 
 def predict_with_lstm(features: np.ndarray,
-                      band_powers: Dict[str, float]) -> Tuple[str, float, Dict[str, float]]:
+                      band_powers: Dict[str, float],
+                      raw_eeg: np.ndarray = None) -> Tuple[str, float, Dict[str, float]]:
     """
-    Uses the Random Forest model for 'LSTM' predictions.
-    RF provides genuinely different decision boundaries from SVM (axis-aligned
-    vs hyperplane splits) — a real trained model, not a heuristic.
+    Real Bidirectional LSTM on raw EEG time-series windows.
 
-    Note: originally this was 'SVM with tweaked features', which was
-    misleading. RF is the honest alternative here until a true LSTM
-    is trained on sequential EEG data.
+    When models/lstm_model.pt exists (after running python train_lstm.py)
+    this uses a true PyTorch Bi-LSTM trained on raw EEG windows.
+    Falls back to Random Forest when .pt is not yet available.
     """
+    # ── Try real LSTM first ──────────────────────────────────────────────────
+    lstm = get_lstm_predictor()
+    if lstm.available and raw_eeg is not None:
+        try:
+            return lstm.predict(raw_eeg)
+        except Exception as e:
+            print(f"  LSTM inference error: {e} — falling back to RF")
+
+    # ── Fallback: Random Forest ──────────────────────────────────────────────
     if _RF_MODEL is not None:
         return _predict_with_model(_RF_MODEL, features,
                                    confidence_scale=0.88, confidence_shift=0.08)
-    # Fallback
     scores = _rule_based_scores(band_powers)
     best = max(scores, key=scores.get)
     return best, round(scores[best] * 0.88 + 0.08, 3), scores
@@ -217,7 +225,8 @@ def predict_ensemble(features: np.ndarray,
 
 def predict_emotion(features: np.ndarray,
                     band_powers: Dict[str, float],
-                    model_type: str = "SVM") -> Dict:
+                    model_type: str = "SVM",
+                    raw_eeg: np.ndarray = None) -> Dict:
     """
     Main prediction dispatcher. Routes to the right model by model_type.
     Returns emotion, confidence, per-class scores, and clinical interpretation.
@@ -230,8 +239,8 @@ def predict_emotion(features: np.ndarray,
         emotion, confidence, scores = predict_with_cnn(features, band_powers)
         display_model = model_type
     elif model_type == "LSTM":
-        emotion, confidence, scores = predict_with_lstm(features, band_powers)
-        display_model = model_type
+        emotion, confidence, scores = predict_with_lstm(features, band_powers, raw_eeg=raw_eeg)
+        display_model = "LSTM" if (get_lstm_predictor().available and raw_eeg is not None) else "LSTM(RF)"
     elif model_type in ("XGB", "XGBOOST"):
         emotion, confidence, scores = predict_with_xgboost(features, band_powers)
         display_model = "XGB"

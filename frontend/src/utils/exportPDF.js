@@ -247,6 +247,96 @@ export function exportResultAsPDF(result) {
         y += 4;
     }
 
+    // ── 7. SHAP Feature Importance ───────────────────────────────────────────
+    const shapData = result.shapExplanation;
+    if (shapData && Object.keys(shapData).length > 0) {
+        // Check page space — add new page if needed
+        if (y > 220) { doc.addPage(); y = 20; }
+
+        y = addSectionTitle(doc, "AI Explainability — SHAP Feature Importance", y, [50, 50, 80]);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8.5);
+        doc.setTextColor(100, 100, 120);
+        doc.text(
+            `Which brainwave features most influenced the "${result.emotion}" prediction:`,
+            14, y
+        );
+        y += 7;
+
+        const sorted = Object.entries(shapData)
+            .sort(([, a], [, b]) => Math.abs(b) - Math.abs(a))
+            .slice(0, 8);
+
+        const maxAbs = Math.max(...sorted.map(([, v]) => Math.abs(v)), 0.0001);
+        const barMaxW = maxW - 65;
+
+        sorted.forEach(([name, value]) => {
+            const isPositive = value >= 0;
+            const barW = Math.abs(value) / maxAbs * barMaxW * 0.85;
+            const color = isPositive ? emotionColor : [239, 68, 68];
+
+            // Feature name
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(8);
+            doc.setTextColor(70, 70, 90);
+            doc.text(name.length > 22 ? name.slice(0, 22) + "…" : name, 14, y + 3.5);
+
+            // Background bar
+            doc.setFillColor(230, 230, 240);
+            doc.roundedRect(78, y, barMaxW, 5, 1, 1, "F");
+
+            // Value bar
+            if (barW > 0.5) {
+                doc.setFillColor(...color);
+                doc.roundedRect(78, y, barW, 5, 1, 1, "F");
+            }
+
+            // Value label
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(7.5);
+            doc.setTextColor(...color);
+            doc.text(`${isPositive ? "+" : ""}${value.toFixed(3)}`, pageW - 14, y + 3.8, { align: "right" });
+
+            y += 8;
+        });
+
+        // Legend
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7.5);
+        doc.setTextColor(139, 139, 160);
+        doc.text("■ Green = supports detected emotion   ■ Red = opposes detected emotion", 14, y + 2);
+        y += 10;
+    }
+
+    // ── 8. Emotion Timeline Summary ──────────────────────────────────────────
+    const timeline = result.emotionTimeline;
+    if (timeline && timeline.length >= 3) {
+        if (y > 240) { doc.addPage(); y = 20; }
+        y = addSectionTitle(doc, "Emotion Timeline Summary", y, [50, 50, 80]);
+
+        const counts = {};
+        timeline.forEach(({ emotion }) => { counts[emotion] = (counts[emotion] || 0) + 1; });
+        const total = timeline.length;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.setTextColor(60, 60, 80);
+        doc.text(`${total} windows analysed  ·  ${(timeline[timeline.length - 1]?.time_s || 0).toFixed(1)}s session duration`, 14, y);
+        y += 8;
+
+        Object.entries(counts)
+            .sort(([, a], [, b]) => b - a)
+            .forEach(([emo, cnt]) => {
+                const pct = (cnt / total * 100).toFixed(1);
+                const color = {
+                    Happy: [245, 158, 11], Calm: [16, 185, 129],
+                    Stress: [139, 92, 246], Angry: [239, 68, 68], Sad: [59, 130, 246],
+                }[emo] || [99, 102, 241];
+                y = addEmotionScoreBar(doc, `${emo} (${pct}%)`, cnt / total, y, maxW - 40);
+            });
+        y += 6;
+    }
+
     // ── Footer on every page ──────────────────────────────────────────────────
     const totalPages = doc.internal.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {

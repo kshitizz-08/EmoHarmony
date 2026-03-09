@@ -8,17 +8,12 @@ import api from "../services/api";
 const Profile = () => {
     const { user, logout, updateUser } = useAuth();
     const navigate = useNavigate();
-
     const [results, setResults] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState("history");
-
-    // Profile edit state
     const [name, setName] = useState(user?.name || "");
     const [saveMsg, setSaveMsg] = useState("");
-
-    // Password change state
     const [pwForm, setPwForm] = useState({ current: "", newPw: "", confirm: "" });
     const [pwMsg, setPwMsg] = useState("");
     const [pwError, setPwError] = useState("");
@@ -34,11 +29,8 @@ const Profile = () => {
         try {
             const res = await api.put("/auth/profile", { name });
             updateUser(res.data.user);
-            setSaveMsg("Profile updated!");
-            setTimeout(() => setSaveMsg(""), 3000);
-        } catch (err) {
-            setSaveMsg("Update failed");
-        }
+            setSaveMsg("Profile updated!"); setTimeout(() => setSaveMsg(""), 3000);
+        } catch { setSaveMsg("Update failed"); }
     };
 
     const handleChangePassword = async () => {
@@ -47,172 +39,160 @@ const Profile = () => {
         if (pwForm.newPw.length < 6) { setPwError("Password must be at least 6 characters"); return; }
         try {
             await api.put("/auth/change-password", { currentPassword: pwForm.current, newPassword: pwForm.newPw });
-            setPwMsg("Password changed successfully!");
-            setPwForm({ current: "", newPw: "", confirm: "" });
+            setPwMsg("Password changed!"); setPwForm({ current: "", newPw: "", confirm: "" });
             setTimeout(() => setPwMsg(""), 3000);
-        } catch (err) {
-            setPwError(err.response?.data?.error || "Password change failed");
-        }
+        } catch (err) { setPwError(err.response?.data?.error || "Password change failed"); }
     };
 
-    const handleLogout = () => { logout(); navigate("/"); };
+    const initials = user?.name?.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase() || "U";
 
     return (
-        <div className="min-h-screen bg-neuro">
+        <div className="app-shell">
             <Navbar />
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 page-enter">
-                {/* Profile Hero */}
-                <div className="glass-card p-6 mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                    {/* Avatar */}
-                    <div className="w-20 h-20 rounded-2xl bg-indigo-500/20 border-2 border-indigo-500/40 flex items-center justify-center text-4xl font-black text-indigo-300 shrink-0">
-                        {user?.name?.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="text-center sm:text-left flex-1">
-                        <h1 className="text-2xl font-bold text-white">{user?.name}</h1>
-                        <p className="text-slate-400">{user?.email}</p>
-                        <div className="flex flex-wrap gap-2 mt-2 justify-center sm:justify-start">
-                            <span className={`text-xs px-2 py-0.5 rounded-full capitalize border ${user?.role === "admin" ? "text-amber-300 bg-amber-500/10 border-amber-500/30" :
-                                    user?.role === "researcher" ? "text-indigo-300 bg-indigo-500/10 border-indigo-500/30" :
-                                        "text-slate-400 bg-white/5 border-white/10"
-                                }`}>{user?.role}</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full text-emerald-300 bg-emerald-500/10 border border-emerald-500/30">
-                                Active
-                            </span>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 text-center shrink-0">
-                        <div className="glass p-3 rounded-xl">
-                            <div className="text-xl font-bold text-white">{total}</div>
-                            <div className="text-xs text-slate-500">Sessions</div>
-                        </div>
-                        <div className="glass p-3 rounded-xl">
-                            <div className="text-xl font-bold text-white">{user?.totalSessions || 0}</div>
-                            <div className="text-xs text-slate-500">Logins</div>
-                        </div>
-                    </div>
+            <div className="app-main page-enter">
+
+                {/* Top bar */}
+                <div className="app-topbar">
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>Profile</span>
                 </div>
 
-                {/* Tabs */}
-                <div className="flex gap-2 mb-6">
-                    {["history", "settings"].map((t) => (
-                        <button key={t} onClick={() => setTab(t)}
-                            className={`px-5 py-2 rounded-xl text-sm font-medium capitalize transition-all ${tab === t ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40" : "text-slate-400 hover:text-white hover:bg-white/5"
-                                }`}>
-                            {t === "history" ? "📋 Session History" : "⚙️ Settings"}
-                        </button>
-                    ))}
-                </div>
+                <div className="app-content">
 
-                {/* ── History Tab ───────────────────────────────────────────────── */}
-                {tab === "history" && (
-                    <div className="glass-card overflow-hidden">
-                        <div className="p-4 border-b border-white/5 flex items-center justify-between">
-                            <h2 className="text-white font-medium">My EEG Sessions</h2>
-                            <span className="text-slate-500 text-sm">{total} total</span>
+                    {/* Profile header card */}
+                    <div className="card" style={{ padding: 20, marginBottom: 16, display: "flex", alignItems: "center", gap: 20 }}>
+                        <div style={{ width: 56, height: 56, borderRadius: 12, background: "var(--accent-light)", border: "1px solid var(--accent-border)", color: "var(--accent)", fontSize: 20, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            {initials}
                         </div>
-                        {loading ? (
-                            <div className="p-8 text-center text-slate-500">Loading...</div>
-                        ) : results.length === 0 ? (
-                            <div className="p-12 text-center">
-                                <div className="text-4xl mb-3">📂</div>
-                                <p className="text-slate-400 mb-4">No sessions yet</p>
-                                <Link to="/upload" className="btn-primary text-sm">Upload EEG Data</Link>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text-primary)" }}>{user?.name}</div>
+                            <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>{user?.email}</div>
+                            <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+                                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 999, background: "var(--bg-subtle)", border: "1px solid var(--border)", color: "var(--text-secondary)", textTransform: "capitalize" }}>{user?.role}</span>
+                                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 999, background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#16a34a" }}>Active</span>
                             </div>
-                        ) : (
-                            <div className="overflow-x-auto">
-                                <table className="w-full data-table">
+                        </div>
+                        <div style={{ display: "flex", gap: 10, textAlign: "center" }}>
+                            <div style={{ padding: "12px 20px", background: "var(--bg-subtle)", borderRadius: 8 }}>
+                                <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text-primary)" }}>{total}</div>
+                                <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Sessions</div>
+                            </div>
+                            <div style={{ padding: "12px 20px", background: "var(--bg-subtle)", borderRadius: 8 }}>
+                                <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text-primary)" }}>{user?.totalSessions || 0}</div>
+                                <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Logins</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Tabs */}
+                    <div style={{ display: "flex", gap: 4, marginBottom: 16, borderBottom: "1px solid var(--border)", paddingBottom: 0 }}>
+                        {[["history", "📋 Session History"], ["settings", "⚙️ Settings"]].map(([t, label]) => (
+                            <button key={t} onClick={() => setTab(t)} style={{
+                                padding: "8px 16px", fontSize: 13, fontWeight: 500, background: "none",
+                                border: "none", cursor: "pointer", borderBottom: tab === t ? "2px solid var(--accent)" : "2px solid transparent",
+                                color: tab === t ? "var(--accent)" : "var(--text-secondary)",
+                                marginBottom: -1, transition: "color 0.15s",
+                            }}>{label}</button>
+                        ))}
+                    </div>
+
+                    {/* History */}
+                    {tab === "history" && (
+                        <div className="card">
+                            <div className="card-header">
+                                <span className="card-title">My EEG Sessions</span>
+                                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{total} total</span>
+                            </div>
+                            {loading ? (
+                                <div style={{ padding: 32, textAlign: "center", color: "var(--text-muted)" }}>Loading…</div>
+                            ) : results.length === 0 ? (
+                                <div style={{ padding: 40, textAlign: "center" }}>
+                                    <div style={{ fontSize: 36, marginBottom: 10 }}>📂</div>
+                                    <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 14 }}>No sessions yet</p>
+                                    <Link to="/upload" className="btn-primary" style={{ fontSize: 12 }}>Upload EEG Data</Link>
+                                </div>
+                            ) : (
+                                <table className="data-table" style={{ width: "100%", borderCollapse: "collapse" }}>
                                     <thead>
                                         <tr>
-                                            <th className="text-left">File</th>
-                                            <th className="text-left">Emotion</th>
-                                            <th className="text-left">Model</th>
-                                            <th className="text-left">Confidence</th>
-                                            <th className="text-left">Date</th>
-                                            <th className="text-left">View</th>
+                                            <th style={{ textAlign: "left" }}>File</th>
+                                            <th style={{ textAlign: "left" }}>Emotion</th>
+                                            <th style={{ textAlign: "left" }}>Model</th>
+                                            <th style={{ textAlign: "left" }}>Confidence</th>
+                                            <th style={{ textAlign: "left" }}>Date</th>
+                                            <th style={{ textAlign: "right" }}>View</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {results.map((r) => (
                                             <tr key={r._id}>
-                                                <td className="text-slate-300 text-sm max-w-[180px] truncate">{r.filename}</td>
+                                                <td style={{ color: "var(--text-primary)", fontWeight: 500, maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.filename}</td>
                                                 <td><EmotionBadge emotion={r.emotion} size="sm" /></td>
-                                                <td><span className="text-xs px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300">{r.modelUsed}</span></td>
+                                                <td><span className="tag">{r.modelUsed}</span></td>
                                                 <td>
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-16 progress-bar">
-                                                            <div className="progress-fill" style={{ width: `${Math.round(r.confidence * 100)}%` }} />
-                                                        </div>
-                                                        <span className="text-xs text-white">{Math.round(r.confidence * 100)}%</span>
+                                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                                        <div className="progress-bar" style={{ width: 56 }}><div className="progress-fill" style={{ width: `${Math.round(r.confidence * 100)}%` }} /></div>
+                                                        <span style={{ fontSize: 12, color: "var(--text-primary)", fontWeight: 600 }}>{Math.round(r.confidence * 100)}%</span>
                                                     </div>
                                                 </td>
-                                                <td className="text-slate-500 text-xs">{new Date(r.createdAt).toLocaleDateString()}</td>
-                                                <td>
-                                                    <Link to={`/results/${r._id}`} className="text-indigo-400 hover:text-indigo-300 text-xs underline">View →</Link>
-                                                </td>
+                                                <td style={{ color: "var(--text-muted)", fontSize: 12 }}>{new Date(r.createdAt).toLocaleDateString()}</td>
+                                                <td style={{ textAlign: "right" }}><Link to={`/results/${r._id}`} style={{ fontSize: 12, color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>View →</Link></td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>
-                        )}
-                    </div>
-                )}
+                            )}
+                        </div>
+                    )}
 
-                {/* ── Settings Tab ──────────────────────────────────────────────── */}
-                {tab === "settings" && (
-                    <div className="space-y-6">
-                        {/* Edit Profile */}
-                        <div className="glass-card p-6">
-                            <h2 className="text-lg font-semibold text-white mb-4">Edit Profile</h2>
-                            <div className="space-y-4 max-w-md">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Display Name</label>
-                                    <input type="text" className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
+                    {/* Settings */}
+                    {tab === "settings" && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                            {/* Edit Profile */}
+                            <div className="card" style={{ padding: 20 }}>
+                                <div className="card-title" style={{ marginBottom: 16 }}>Edit Profile</div>
+                                <div style={{ maxWidth: 400, display: "flex", flexDirection: "column", gap: 12 }}>
+                                    <div>
+                                        <label className="input-label">Display Name</label>
+                                        <input type="text" className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
+                                    </div>
+                                    <div>
+                                        <label className="input-label">Email</label>
+                                        <input type="email" className="input-field" value={user?.email} readOnly style={{ opacity: 0.6 }} />
+                                        <p style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 4 }}>Email cannot be changed</p>
+                                    </div>
+                                    {saveMsg && <div className="alert-success">{saveMsg}</div>}
+                                    <button onClick={handleSaveProfile} className="btn-primary" style={{ alignSelf: "flex-start" }}>Save changes</button>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-                                    <input type="email" className="input-field opacity-50 cursor-not-allowed" value={user?.email} readOnly />
-                                    <p className="text-xs text-slate-500 mt-1">Email cannot be changed</p>
+                            </div>
+
+                            {/* Change Password */}
+                            <div className="card" style={{ padding: 20 }}>
+                                <div className="card-title" style={{ marginBottom: 16 }}>Change Password</div>
+                                <div style={{ maxWidth: 400, display: "flex", flexDirection: "column", gap: 12 }}>
+                                    {["Current Password", "New Password", "Confirm New Password"].map((label, i) => (
+                                        <div key={i}>
+                                            <label className="input-label">{label}</label>
+                                            <input type="password" className="input-field" placeholder="••••••••"
+                                                value={[pwForm.current, pwForm.newPw, pwForm.confirm][i]}
+                                                onChange={(e) => setPwForm({ ...pwForm, [["current", "newPw", "confirm"][i]]: e.target.value })} />
+                                        </div>
+                                    ))}
+                                    {pwError && <div className="alert-error">⚠️ {pwError}</div>}
+                                    {pwMsg && <div className="alert-success">✅ {pwMsg}</div>}
+                                    <button onClick={handleChangePassword} className="btn-primary" style={{ alignSelf: "flex-start" }}>Update password</button>
                                 </div>
-                                {saveMsg && <p className="text-sm text-emerald-400">{saveMsg}</p>}
-                                <button onClick={handleSaveProfile} className="btn-primary text-sm">Save Changes</button>
+                            </div>
+
+                            {/* Danger Zone */}
+                            <div className="card" style={{ padding: 20, borderColor: "#fecaca" }}>
+                                <div style={{ fontSize: 14, fontWeight: 600, color: "#dc2626", marginBottom: 8 }}>Sign out</div>
+                                <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 14 }}>Sign out of your current session.</p>
+                                <button onClick={() => { logout(); navigate("/"); }} className="btn-danger">Sign out</button>
                             </div>
                         </div>
-
-                        {/* Change Password */}
-                        <div className="glass-card p-6">
-                            <h2 className="text-lg font-semibold text-white mb-4">Change Password</h2>
-                            <div className="space-y-4 max-w-md">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Current Password</label>
-                                    <input type="password" className="input-field" placeholder="••••••••"
-                                        value={pwForm.current} onChange={(e) => setPwForm({ ...pwForm, current: e.target.value })} />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">New Password</label>
-                                    <input type="password" className="input-field" placeholder="Min. 6 characters"
-                                        value={pwForm.newPw} onChange={(e) => setPwForm({ ...pwForm, newPw: e.target.value })} />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Confirm New Password</label>
-                                    <input type="password" className="input-field" placeholder="Repeat new password"
-                                        value={pwForm.confirm} onChange={(e) => setPwForm({ ...pwForm, confirm: e.target.value })} />
-                                </div>
-                                {pwError && <p className="text-sm text-rose-400">⚠️ {pwError}</p>}
-                                {pwMsg && <p className="text-sm text-emerald-400">✅ {pwMsg}</p>}
-                                <button onClick={handleChangePassword} className="btn-primary text-sm">Update Password</button>
-                            </div>
-                        </div>
-
-                        {/* Danger Zone */}
-                        <div className="glass-card p-6 border border-rose-500/20">
-                            <h2 className="text-lg font-semibold text-rose-400 mb-3">⚠️ Danger Zone</h2>
-                            <p className="text-slate-400 text-sm mb-4">Sign out of your current session.</p>
-                            <button onClick={handleLogout} className="btn-danger">Sign Out</button>
-                        </div>
-                    </div>
-                )}
-            </main>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

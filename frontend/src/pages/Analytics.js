@@ -8,10 +8,11 @@ import {
     PieChart, Pie, Cell, Legend, BarChart, Bar
 } from "recharts";
 
-const EMOTION_COLORS = { Happy: "#f59e0b", Sad: "#3b82f6", Angry: "#ef4444", Calm: "#10b981", Stress: "#8b5cf6" };
-const TOOLTIP_STYLE = {
-    contentStyle: { background: "rgba(10,11,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 },
-    labelStyle: { color: "#94a3b8" }, itemStyle: { color: "#e2e8f0" },
+const EMOTION_COLORS = { Happy: "#f59e0b", Sad: "#3b82f6", Angry: "#ef4444", Calm: "#0d9488", Stress: "#8b5cf6" };
+
+const CHART_TOOLTIP = {
+    contentStyle: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" },
+    labelStyle: { color: "#475569" }, itemStyle: { color: "#0f172a" },
 };
 
 const Analytics = () => {
@@ -24,17 +25,6 @@ const Analytics = () => {
             .catch(console.error)
             .finally(() => setLoading(false));
     }, []);
-
-    if (loading) return (
-        <div className="min-h-screen bg-neuro"><Navbar />
-            <div className="flex items-center justify-center h-96">
-                <div className="text-center">
-                    <div className="flex gap-1 justify-center mb-4">{[...Array(8)].map((_, i) => <span key={i} className="wave-bar" />)}</div>
-                    <p className="text-slate-400">Loading analytics...</p>
-                </div>
-            </div>
-        </div>
-    );
 
     const pieData = data?.distribution
         ? Object.entries(data.distribution).filter(([, v]) => v > 0).map(([name, value]) => ({ name, value }))
@@ -53,144 +43,169 @@ const Analytics = () => {
         : [];
 
     return (
-        <div className="min-h-screen bg-neuro">
+        <div className="app-shell">
             <Navbar />
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 page-enter">
-                <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="app-main page-enter">
+
+                {/* Top bar */}
+                <div className="app-topbar">
                     <div>
-                        <h1 className="text-3xl font-bold text-white">Analytics</h1>
-                        <p className="text-slate-400 mt-1">Your emotional trends over the last 30 days</p>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>Analytics</span>
+                        <span style={{ fontSize: 13, color: "var(--text-muted)", marginLeft: 8 }}>· Emotional trends over the last 30 days</span>
                     </div>
-                    <Link to="/upload" className="btn-primary self-start">+ New Analysis</Link>
+                    <Link to="/upload" className="btn-primary">+ New Analysis</Link>
                 </div>
 
-                {/* KPI Row */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                    {[
-                        { label: "Total Sessions", val: data?.total || 0, icon: "📊", color: "text-indigo-300" },
-                        { label: "Stress Index", val: `${data?.stressIndex || 0}%`, icon: "😰", color: "text-purple-300" },
-                        { label: "Calmness Ratio", val: `${data?.calmnessRatio || 0}%`, icon: "😌", color: "text-emerald-300" },
-                        { label: "Recent Sessions", val: data?.recentSessions?.length || 0, icon: "🕐", color: "text-amber-300" },
-                    ].map(({ label, val, icon, color }) => (
-                        <div key={label} className="glass-card p-5">
-                            <div className="text-2xl mb-2">{icon}</div>
-                            <div className={`text-2xl font-bold ${color}`}>{val}</div>
-                            <div className="text-sm text-slate-400 mt-0.5">{label}</div>
-                        </div>
-                    ))}
-                </div>
+                <div className="app-content">
 
-                {/* Stress & Calmness Gauges */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                    {[
-                        { label: "Stress Index", pct: data?.stressIndex || 0, color: "#8b5cf6", sub: "% of sessions were negative emotion" },
-                        { label: "Calmness Ratio", pct: data?.calmnessRatio || 0, color: "#10b981", sub: "% of sessions were positive emotion" },
-                    ].map(({ label, pct, color, sub }) => (
-                        <div key={label} className="glass-card p-6">
-                            <h3 className="text-white font-semibold mb-4">{label}</h3>
-                            <div className="flex items-center gap-4">
-                                <div className="relative w-24 h-24 shrink-0">
-                                    <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                                        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
-                                        <circle cx="50" cy="50" r="40" fill="none" stroke={color} strokeWidth="12"
-                                            strokeLinecap="round"
-                                            strokeDasharray={`${2 * Math.PI * 40}`}
-                                            strokeDashoffset={`${2 * Math.PI * 40 * (1 - pct / 100)}`} />
-                                    </svg>
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <span className="text-lg font-bold text-white">{pct}%</span>
+                    {loading ? (
+                        <div style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>Loading analytics…</div>
+                    ) : (
+                        <>
+                            {/* KPI Row */}
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 20 }}>
+                                {[
+                                    { label: "Total Sessions", val: data?.total || 0, icon: "📊", bg: "#e0f2fe" },
+                                    { label: "Stress Index", val: `${data?.stressIndex || 0}%`, icon: "😰", bg: "#f5f3ff" },
+                                    { label: "Calmness Ratio", val: `${data?.calmnessRatio || 0}%`, icon: "😌", bg: "#f0fdfa" },
+                                    { label: "Recent Sessions", val: data?.recentSessions?.length || 0, icon: "🕐", bg: "#fffbeb" },
+                                ].map(({ label, val, icon, bg }) => (
+                                    <div key={label} style={{ background: "#fff", border: "1px solid var(--border)", borderRadius: 10, padding: 20, boxShadow: "0 1px 2px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
+                                        <div style={{ width: 34, height: 34, borderRadius: 8, background: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, marginBottom: 12 }}>{icon}</div>
+                                        <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text-primary)", lineHeight: 1.1, marginBottom: 4 }}>{val}</div>
+                                        <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
+                                    </div>
+                                ))}
+
+                            </div>
+
+                            {/* Gauges */}
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                                {[
+                                    { label: "Stress Index", pct: data?.stressIndex || 0, color: "#8b5cf6", sub: "% of sessions were negative emotion" },
+                                    { label: "Calmness Ratio", pct: data?.calmnessRatio || 0, color: "#0d9488", sub: "% of sessions were positive emotion" },
+                                ].map(({ label, pct, color, sub }) => (
+                                    <div key={label} className="card" style={{ padding: 20 }}>
+                                        <div className="card-title" style={{ marginBottom: 16 }}>{label}</div>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                                            <div style={{ position: "relative", width: 80, height: 80, flexShrink: 0 }}>
+                                                <svg viewBox="0 0 100 100" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
+                                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+                                                    <circle cx="50" cy="50" r="40" fill="none" stroke={color} strokeWidth="12"
+                                                        strokeLinecap="round"
+                                                        strokeDasharray={`${2 * Math.PI * 40}`}
+                                                        strokeDashoffset={`${2 * Math.PI * 40 * (1 - pct / 100)}`} />
+                                                </svg>
+                                                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                    <span style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>{pct}%</span>
+                                                </div>
+                                            </div>
+                                            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{sub}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Charts */}
+                            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 16 }}>
+                                {/* Weekly trend */}
+                                <div className="card">
+                                    <div className="card-header"><span className="card-title">Weekly Emotion Trend</span></div>
+                                    <div className="card-body">
+                                        {weeklyPoints.some(w => w.total > 0) ? (
+                                            <ResponsiveContainer width="100%" height={200}>
+                                                <LineChart data={weeklyPoints}>
+                                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                                                    <XAxis dataKey="day" tick={{ fill: "#94a3b8", fontSize: 11 }} />
+                                                    <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} allowDecimals={false} />
+                                                    <Tooltip {...CHART_TOOLTIP} />
+                                                    {Object.keys(EMOTION_COLORS).map((e) => (
+                                                        <Line key={e} type="monotone" dataKey={e} stroke={EMOTION_COLORS[e]} strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                                                    ))}
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <div style={{ height: 200, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "var(--text-muted)" }}>
+                                                <p style={{ fontSize: 13, marginBottom: 12 }}>No data in the last 30 days.</p>
+                                                <Link to="/upload" className="btn-primary" style={{ fontSize: 12 }}>Upload EEG</Link>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                <p className="text-slate-400 text-sm">{sub}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    {/* Weekly Emotion Trend */}
-                    <div className="glass-card p-6 col-span-1 lg:col-span-2">
-                        <h2 className="text-lg font-semibold text-white mb-4">Weekly Emotion Trend</h2>
-                        {weeklyPoints.some(w => w.total > 0) ? (
-                            <ResponsiveContainer width="100%" height={220}>
-                                <LineChart data={weeklyPoints}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                                    <XAxis dataKey="day" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-                                    <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} allowDecimals={false} />
-                                    <Tooltip {...TOOLTIP_STYLE} />
-                                    {Object.keys(EMOTION_COLORS).map((e) => (
-                                        <Line key={e} type="monotone" dataKey={e} stroke={EMOTION_COLORS[e]}
-                                            strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                                    ))}
-                                </LineChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className="h-48 flex flex-col items-center justify-center text-slate-500">
-                                <p className="text-sm">No data in the last 30 days. Upload some EEG files first.</p>
-                                <Link to="/upload" className="btn-primary text-sm mt-3">Upload EEG</Link>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Emotion Distribution Pie */}
-                    <div className="glass-card p-6">
-                        <h2 className="text-lg font-semibold text-white mb-4">Emotion Distribution</h2>
-                        {pieData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={220}>
-                                <PieChart>
-                                    <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} paddingAngle={3} dataKey="value">
-                                        {pieData.map((e) => <Cell key={e.name} fill={EMOTION_COLORS[e.name] || "#6366f1"} />)}
-                                    </Pie>
-                                    <Tooltip {...TOOLTIP_STYLE} />
-                                    <Legend iconSize={10} iconType="circle"
-                                        formatter={(v) => <span className="text-slate-400 text-xs">{v}</span>} />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className="h-48 flex items-center justify-center text-slate-500 text-sm">No data yet</div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Average Band Powers */}
-                <div className="glass-card p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">Average Brainwave Band Powers (30 Days)</h2>
-                    <p className="text-xs text-slate-500 mb-4">Average μV²/Hz across all sessions in the past month</p>
-                    {bandAvgData.some((b) => b.power > 0) ? (
-                        <ResponsiveContainer width="100%" height={160}>
-                            <BarChart data={bandAvgData}>
-                                <XAxis dataKey="band" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-                                <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} />
-                                <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [`${v} μV²/Hz`, "Avg Power"]} />
-                                <Bar dataKey="power" radius={[6, 6, 0, 0]} fill="#6366f1" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <div className="h-32 flex items-center justify-center text-slate-500 text-sm">No data yet</div>
-                    )}
-                </div>
-
-                {/* Recent Sessions Timeline */}
-                <div className="glass-card p-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">Recent Sessions</h2>
-                    {data?.recentSessions?.length > 0 ? (
-                        <div className="space-y-3">
-                            {data.recentSessions.map((s, i) => (
-                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                                    <EmotionBadge emotion={s.emotion} size="sm" />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-sm text-white">{new Date(s.date).toLocaleDateString()}</div>
-                                        <div className="text-xs text-slate-500">Model: {s.model}</div>
+                                {/* Pie */}
+                                <div className="card">
+                                    <div className="card-header"><span className="card-title">Emotion Distribution</span></div>
+                                    <div className="card-body">
+                                        {pieData.length > 0 ? (
+                                            <ResponsiveContainer width="100%" height={200}>
+                                                <PieChart>
+                                                    <Pie data={pieData} cx="50%" cy="50%" outerRadius={75} paddingAngle={3} dataKey="value">
+                                                        {pieData.map((e) => <Cell key={e.name} fill={EMOTION_COLORS[e.name] || "#6366f1"} />)}
+                                                    </Pie>
+                                                    <Tooltip {...CHART_TOOLTIP} />
+                                                    <Legend iconSize={8} iconType="circle" formatter={(v) => <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>{v}</span>} />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: 13 }}>No data yet</div>
+                                        )}
                                     </div>
-                                    <div className="text-sm font-semibold text-indigo-300">{Math.round(s.confidence * 100)}%</div>
                                 </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-slate-500 text-sm text-center py-8">No recent sessions. <Link to="/upload" className="text-indigo-400">Upload EEG data</Link></p>
+                            </div>
+
+                            {/* Band powers */}
+                            <div className="card" style={{ marginBottom: 16 }}>
+                                <div className="card-header">
+                                    <span className="card-title">Average Brainwave Band Powers</span>
+                                    <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>μV²/Hz across all sessions</span>
+                                </div>
+                                <div className="card-body">
+                                    {bandAvgData.some((b) => b.power > 0) ? (
+                                        <ResponsiveContainer width="100%" height={150}>
+                                            <BarChart data={bandAvgData}>
+                                                <XAxis dataKey="band" tick={{ fill: "#94a3b8", fontSize: 12 }} />
+                                                <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} />
+                                                <Tooltip {...CHART_TOOLTIP} formatter={(v) => [`${v} μV²/Hz`, "Avg Power"]} />
+                                                <Bar dataKey="power" radius={[5, 5, 0, 0]} fill="#0d9488" />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <div style={{ height: 120, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: 13 }}>No data yet</div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Recent sessions */}
+                            <div className="card">
+                                <div className="card-header"><span className="card-title">Recent Sessions</span></div>
+                                {data?.recentSessions?.length > 0 ? (
+                                    <table className="data-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+                                        <thead>
+                                            <tr><th style={{ textAlign: "left" }}>Emotion</th><th style={{ textAlign: "left" }}>Date</th><th style={{ textAlign: "left" }}>Model</th><th style={{ textAlign: "right" }}>Confidence</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            {data.recentSessions.map((s, i) => (
+                                                <tr key={i}>
+                                                    <td><EmotionBadge emotion={s.emotion} size="sm" /></td>
+                                                    <td style={{ color: "var(--text-secondary)" }}>{new Date(s.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td>
+                                                    <td><span className="tag">{s.model}</span></td>
+                                                    <td style={{ textAlign: "right", fontWeight: 600, color: "var(--accent)" }}>{Math.round(s.confidence * 100)}%</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <div style={{ padding: 32, textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
+                                        No recent sessions.{" "}
+                                        <Link to="/upload" style={{ color: "var(--accent)", textDecoration: "none" }}>Upload EEG data</Link>
+                                    </div>
+                                )}
+                            </div>
+                        </>
                     )}
                 </div>
-            </main>
+            </div>
         </div>
     );
 };
