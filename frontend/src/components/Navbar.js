@@ -16,13 +16,15 @@ const Icons = {
     shield: <svg viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>,
     logout: <svg viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" /></svg>,
     brain: <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>,
+    camera: <svg viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" /></svg>,
 };
 
 const NAV_LINKS = [
-    { to: "/dashboard", label: "Dashboard", icon: Icons.grid, id: "nav-dashboard" },
-    { to: "/upload", label: "Analyze EEG", icon: Icons.upload, id: "upload-nav-link" },
-    { to: "/analytics", label: "Analytics", icon: Icons.chart },
-    { to: "/profile", label: "Profile", icon: Icons.user },
+    { to: "/dashboard",    label: "Dashboard",  icon: Icons.grid,   id: "nav-dashboard" },
+    { to: "/upload",       label: "Analyze EEG", icon: Icons.upload, id: "upload-nav-link" },
+    { to: "/face-emotion", label: "Face Scan",   icon: Icons.camera, id: "nav-face-emotion" },
+    { to: "/analytics",   label: "Analytics",  icon: Icons.chart },
+    { to: "/profile",     label: "Profile",    icon: Icons.user },
 ];
 
 const Navbar = () => {

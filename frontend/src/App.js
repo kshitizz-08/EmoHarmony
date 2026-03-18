@@ -17,6 +17,7 @@ import Results from "./pages/Results";
 import Analytics from "./pages/Analytics";
 import AdminPanel from "./pages/AdminPanel";
 import Profile from "./pages/Profile";
+import FaceEmotion from "./pages/FaceEmotion";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="/results/:id" element={<ProtectedRoute><Results /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/face-emotion" element={<ProtectedRoute><FaceEmotion /></ProtectedRoute>} />
 
             {/* ── Admin only ── */}
             <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminPanel /></ProtectedRoute>} />
