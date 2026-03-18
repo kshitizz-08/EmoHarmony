@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "**",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/models/*shard1",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/octet-stream"
+        }
+      ]
+    }
+  ],
+  "cleanUrls": true
+}
