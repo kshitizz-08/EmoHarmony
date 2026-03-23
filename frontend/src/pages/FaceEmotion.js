@@ -169,6 +169,18 @@ const FaceEmotion = () => {
 
       if (!detection) { setFaceDetected(false); return; }
 
+      // Adjust expression scores to penalize "neutral" bias
+      const adjustedExpressions = { ...detection.expressions };
+      if (adjustedExpressions.neutral !== undefined) {
+        adjustedExpressions.neutral *= 0.2;
+      }
+      const totalScore = Object.values(adjustedExpressions).reduce((sum, score) => sum + score, 0);
+      if (totalScore > 0) {
+        for (const key in adjustedExpressions) {
+          adjustedExpressions[key] /= totalScore;
+        }
+      }
+
       // Bounding box
       const { x, y, width, height } = detection.detection.box;
       ctx.strokeStyle = "#6366f1";
@@ -178,7 +190,7 @@ const FaceEmotion = () => {
       ctx.stroke();
 
       // Label pill
-      const [emoKey, emoConf] = topEmotion(detection.expressions);
+      const [emoKey, emoConf] = topEmotion(adjustedExpressions);
       const meta  = EMOTION_META[emoKey] ?? { label: emoKey, emoji: "🙂", color: "#888" };
       const label = `${meta.emoji} ${meta.label}  ${Math.round(emoConf * 100)}%`;
       ctx.font     = "bold 14px Inter, sans-serif";
@@ -200,7 +212,7 @@ const FaceEmotion = () => {
 
       setFaceDetected(true);
       setTopEmo({ key: emoKey, conf: Math.round(emoConf * 100), ...meta });
-      setBarData(expressionsToBarData(detection.expressions));
+      setBarData(expressionsToBarData(adjustedExpressions));
       setFrameCount(c => c + 1);
       setTimeline(prev => {
         const pt = { t: Math.round((Date.now() - sessionStart) / 1000), emotion: meta.label, score: Math.round(emoConf * 100) };
