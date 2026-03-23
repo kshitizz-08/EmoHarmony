@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 import Navbar from "../components/Navbar";
 import EmotionBadge from "../components/EmotionBadge";
 import api from "../services/api";
@@ -12,7 +12,7 @@ const EMOTION_COLORS = {
 };
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const [results, setResults] = useState([]);
   const [stats, setStats] = useState(null);

@@ -1,13 +1,13 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 
 /**
  * ProtectedRoute - Guards routes for authenticated users (and optionally admin).
  * Redirects to /login if not authenticated, or / if not admin.
  */
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-    const { user, loading } = useAuth();
+    const { user, loading } = useAuthStore();
 
     if (loading) {
         return (

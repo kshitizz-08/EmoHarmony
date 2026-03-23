@@ -4,8 +4,8 @@
  */
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { useTheme } from "../contexts/ThemeContext";
+import useAuthStore from "../store/useAuthStore";
+import useThemeStore from "../store/useThemeStore";
 
 // Simple SVG icons (inline, no extra packages)
 const Icons = {
@@ -28,8 +28,8 @@ const NAV_LINKS = [
 ];
 
 const Navbar = () => {
-    const { user, logout } = useAuth();
-    const { theme, toggleTheme } = useTheme();
+    const { user, logout } = useAuthStore();
+    const { theme, toggleTheme } = useThemeStore();
     const navigate = useNavigate();
     const location = useLocation();
     const [mobileOpen, setMobileOpen] = useState(false);

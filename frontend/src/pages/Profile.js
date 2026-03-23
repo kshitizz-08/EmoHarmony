@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import EmotionBadge from "../components/EmotionBadge";
-import { useAuth } from "../contexts/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 import api from "../services/api";
 
 const Profile = () => {
-    const { user, logout, updateUser } = useAuth();
+    const { user, logout, updateUser } = useAuthStore();
     const navigate = useNavigate();
     const [results, setResults] = useState([]);
     const [total, setTotal] = useState(0);

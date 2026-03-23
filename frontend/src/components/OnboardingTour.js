@@ -5,7 +5,7 @@
  */
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
-import { useAuth } from "../contexts/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 
 const TOUR_KEY = "emoharmony_tour_done";
 
@@ -97,7 +97,7 @@ const JOYRIDE_STYLES = {
 };
 
 const OnboardingTour = () => {
-    const { user } = useAuth();
+    const { user } = useAuthStore();
     const [run, setRun] = useState(false);
     const [steps, setSteps] = useState([]);
 

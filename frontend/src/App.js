@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import useAuthStore from "./store/useAuthStore";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OnboardingTour from "./components/OnboardingTour";
 
@@ -20,9 +19,13 @@ import Profile from "./pages/Profile";
 import FaceEmotion from "./pages/FaceEmotion";
 
 function App() {
+  const initSession = useAuthStore((s) => s.initSession);
+
+  React.useEffect(() => {
+    initSession();
+  }, [initSession]);
+
   return (
-    <ThemeProvider>
-      <AuthProvider>
         <BrowserRouter>
           {/* Onboarding tour — shown once for first-time logged-in users */}
           <OnboardingTour />
@@ -49,9 +52,7 @@ function App() {
             {/* ── Fallback ── */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </ThemeProvider>
+    </BrowserRouter>
   );
 }
 

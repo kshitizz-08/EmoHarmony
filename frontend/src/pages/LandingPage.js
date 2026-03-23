@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 
 const features = [
     { icon: "🧠", title: "EEG Signal Processing", desc: "Butterworth filtering, artifact removal, and band-power extraction from raw brainwave data." },
@@ -20,7 +20,7 @@ const steps = [
 ];
 
 const LandingPage = () => {
-    const { user } = useAuth();
+    const { user } = useAuthStore();
     const navigate = useNavigate();
 
     return (
