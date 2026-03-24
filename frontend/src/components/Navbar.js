@@ -17,12 +17,14 @@ const Icons = {
     logout: <svg viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" /></svg>,
     brain: <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>,
     camera: <svg viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" /></svg>,
+    reels: <svg viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm3 2l5 3-5 3V5z" clipRule="evenodd" /></svg>,
 };
 
 const NAV_LINKS = [
     { to: "/dashboard",    label: "Dashboard",  icon: Icons.grid,   id: "nav-dashboard" },
     { to: "/upload",       label: "Analyze EEG", icon: Icons.upload, id: "upload-nav-link" },
-    { to: "/face-emotion", label: "Face Scan",   icon: Icons.camera, id: "nav-face-emotion" },
+    { to: "/face-emotion",      label: "Face Scan",       icon: Icons.camera, id: "nav-face-emotion" },
+    { to: "/emotional-reels",  label: "Emotional Reels",  icon: Icons.reels,  id: "nav-emotional-reels" },
     { to: "/analytics",   label: "Analytics",  icon: Icons.chart },
     { to: "/profile",     label: "Profile",    icon: Icons.user },
 ];

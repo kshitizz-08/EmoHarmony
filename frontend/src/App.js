@@ -17,6 +17,7 @@ import Analytics from "./pages/Analytics";
 import AdminPanel from "./pages/AdminPanel";
 import Profile from "./pages/Profile";
 import FaceEmotion from "./pages/FaceEmotion";
+import EmotionalReels from "./pages/EmotionalReels";
 
 function App() {
   const initSession = useAuthStore((s) => s.initSession);
@@ -37,6 +38,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/emotional-reels" element={<EmotionalReels />} />
 
             {/* ── Protected routes ── */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
