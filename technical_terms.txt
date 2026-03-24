@@ -1,0 +1,680 @@
+===============================================================
+ EmoHarmony - Complete Technical Terms Reference
+===============================================================
+
+
+────────────────────────────────────────────────────────────────
+ 1. NEUROSCIENCE & EEG (Electroencephalography)
+────────────────────────────────────────────────────────────────
+
+EEG (Electroencephalography)
+  - A technique for recording electrical activity of the brain
+    using electrodes placed on the scalp.
+
+Brainwave / Neural Oscillation
+  - Rhythmic or repetitive patterns of neural activity in the
+    central nervous system, measured in Hz.
+
+EEG Frequency Bands
+  - Delta (δ): 0.5 – 4 Hz  → deep sleep, unconscious processing
+  - Theta (θ): 4 – 8 Hz    → meditation, drowsiness, creativity
+  - Alpha (α): 8 – 13 Hz   → relaxed wakefulness, calm focus
+  - Beta  (β): 13 – 30 Hz  → active thinking, concentration, stress
+  - Gamma (γ): 30 – 50 Hz  → high-level cognition, perception
+
+Band Power
+  - The amount of signal energy (power) contained within a specific
+    EEG frequency band. Measured in μV²/Hz.
+
+Absolute Band Power
+  - The raw power value of a frequency band before normalization.
+    Varies with EEG device gain/calibration.
+
+Relative Band Power
+  - Band power expressed as a fraction of total power across all
+    bands. Scale-invariant; enables cross-device comparison.
+
+Alpha/Beta Ratio
+  - Ratio of alpha to beta power. High ratio → relaxed state.
+    Low ratio → stress or active cognition.
+
+Theta/Alpha Ratio
+  - Ratio of theta to alpha power. Indicates mental load/drowsiness.
+
+Fatigue Index
+  - (Alpha + Theta) / Beta ratio. Elevated values indicate cognitive
+    fatigue or drowsiness.
+
+Frontal Alpha Asymmetry (FAA)
+  - FAA = ln(alpha_right) − ln(alpha_left).
+    Positive FAA → left-brain active → positive affect (Happy, Calm).
+    Negative FAA → right-brain active → negative affect (Sad, Stress).
+    Based on Davidson's (1992) approach-withdrawal model of emotion.
+
+Hjorth Parameters
+  - Classic time-domain EEG descriptors (Hjorth, 1970):
+    Activity   = signal variance (signal power)
+    Mobility   = std(dx/dt) / std(x); ratio of dominant frequencies
+    Complexity = rate of change of signal shape
+
+Spectral Entropy
+  - Shannon entropy of the normalized Power Spectral Density (PSD).
+    Low entropy → power concentrated in few bands (e.g., Calm).
+    High entropy → power spread across many frequencies (e.g., Stress).
+
+Spectral Edge Frequency (SEF95)
+  - The frequency below which 95% of the total EEG power is contained.
+    Low SEF95 → delta/theta dominant (Sad/drowsy).
+    High SEF95 → beta/gamma dominant (Stress/Angry).
+
+Peak (Dominant) Frequency
+  - The frequency with the maximum power spectral density in the
+    analysis band.
+
+Skewness
+  - Asymmetry of the EEG amplitude distribution around its mean.
+
+Kurtosis (Excess Kurtosis)
+  - Peakedness / heavy-tail measure of the EEG amplitude distribution.
+    High kurtosis → spiky artifacts (e.g., epileptic spikes).
+
+Artifact / Artifact Removal
+  - EEG artifacts are unwanted signals from eye blinks, muscle
+    movement, or electrical noise. Removed via amplitude thresholding.
+
+Amplitude Thresholding (IQR-based)
+  - Adaptive method: samples beyond median ± 5×IQR are replaced with
+    the channel median. More robust than a fixed μV threshold.
+
+Multichannel EEG
+  - EEG recorded simultaneously from multiple electrode positions
+    (channels) on the scalp (e.g., 14-channel Emotiv EPOC headset).
+
+Sampling Rate / Sampling Frequency (fs)
+  - Number of EEG samples recorded per second (Hz).
+    EmoHarmony uses fs = 128 Hz.
+
+Nyquist Frequency
+  - Half the sampling rate (64 Hz at fs=128 Hz). The maximum frequency
+    that can be accurately represented without aliasing.
+
+Emotion Valence
+  - The intrinsic pleasantness/unpleasantness of an emotional state.
+    Positive valence: Happy, Calm. Negative valence: Sad, Stress, Angry.
+
+Emotional Arousal
+  - The intensity or activation level of an emotion.
+    High arousal: Angry, Stress. Low arousal: Sad, Calm.
+
+
+────────────────────────────────────────────────────────────────
+ 2. SIGNAL PROCESSING
+────────────────────────────────────────────────────────────────
+
+Bandpass Filter
+  - A filter that allows signals within a specified frequency range
+    to pass through while attenuating frequencies outside that range.
+
+Butterworth Filter
+  - A type of signal processing filter designed to have a maximally
+    flat frequency response in the passband. Used for EEG filtering.
+
+Filter Order
+  - Controls the roll-off steepness of a filter. Higher order →
+    sharper transition. EmoHarmony uses order = 4.
+
+filtfilt (Zero-Phase Filtering)
+  - Applies a filter forward and backward so the output has zero
+    phase distortion (no time delay). From scipy.signal.
+
+Welch's Method (Power Spectral Density Estimation)
+  - Estimates the Power Spectral Density (PSD) by dividing a signal
+    into overlapping segments, computing the FFT of each, and averaging.
+
+Power Spectral Density (PSD)
+  - Describes how the power of a signal is distributed over frequency.
+    Units: μV²/Hz.
+
+Hann Window
+  - A window function applied to each PSD segment to reduce spectral
+    leakage. Used in Welch's method (nperseg-length window).
+
+Fast Fourier Transform (FFT)
+  - An algorithm to compute the Discrete Fourier Transform (DFT)
+    efficiently. Converts time-domain signal to frequency domain.
+
+Trapezoidal Integration (np.trapz)
+  - Numerical method used to compute band power by integrating the
+    PSD over a frequency range using the trapezoid rule.
+
+Z-Score Normalization
+  - Transforms signal to zero mean and unit variance:
+    z = (x − mean) / std. Used for model input normalization.
+
+Sliding Window Analysis
+  - Divides a long EEG recording into overlapping windows of fixed
+    length (e.g., 2 s) with a stride (e.g., 0.5 s) for temporal analysis.
+
+Synthetic EEG Generation
+  - Programmatically simulates realistic EEG by superimposing
+    sine waves in each frequency band with added pink noise.
+
+Pink Noise (1/f noise)
+  - Noise with a power spectral density inversely proportional to
+    frequency. Approximates natural neural background noise.
+
+
+────────────────────────────────────────────────────────────────
+ 3. MACHINE LEARNING MODELS
+────────────────────────────────────────────────────────────────
+
+SVM — Support Vector Machine
+  - A supervised classifier that finds the optimal hyperplane
+    to separate classes. EmoHarmony uses an RBF kernel SVM.
+    Accuracy: ~94.45%.
+
+RBF Kernel (Radial Basis Function)
+  - A kernel function used by SVM to map data into a higher-dimensional
+    space, enabling non-linear classification.
+
+Random Forest (RF)
+  - An ensemble of decision trees. EmoHarmony uses RF as the
+    backend engine for the "CNN" simulation mode.
+
+XGBoost (eXtreme Gradient Boosting)
+  - A gradient boosted tree algorithm using L1/L2 regularization.
+    Best single-model accuracy in EmoHarmony (~92%).
+
+LightGBM (LGBM)
+  - A leaf-wise gradient boosting framework. Faster than XGBoost
+    with comparable accuracy. Uses built-in class balancing.
+
+Gradient Boosting
+  - An ensemble technique that builds trees sequentially; each tree
+    corrects the errors of the previous ones (boosting).
+
+Bidirectional LSTM (Long Short-Term Memory)
+  - A recurrent neural network architecture that processes sequences
+    in both forward and backward directions. Used for raw EEG windows.
+    Implemented in PyTorch (lstm_model.pt).
+
+Ensemble Learning
+  - Combining predictions from multiple models (SVM + XGBoost + LightGBM)
+    using weighted voting to achieve higher accuracy than any single model.
+
+Weighted Voting (Ensemble)
+  - Blends model probabilities: P_final = w_svm·P_svm + w_xgb·P_xgb
+    + w_lgbm·P_lgbm. Weights are auto-computed from cross-validation.
+
+Cross-Validation
+  - A model evaluation technique that splits data into k folds,
+    trains on k-1 folds, and tests on the remaining fold (repeated k times).
+
+GridSearchCV
+  - Exhaustive search over hyperparameter combinations with cross-
+    validation to find the best model configuration.
+
+Hyperparameter Tuning
+  - Optimizing model settings (e.g., C, gamma in SVM) that control
+    the learning process but are not learned from the training data.
+
+L1 / L2 Regularization
+  - Penalty terms added to the loss function to prevent overfitting.
+    L1 (Lasso) can zero-out features; L2 (Ridge) shrinks coefficients.
+
+Feature Vector
+  - A numerical representation of an EEG segment used as model input.
+    EmoHarmony uses a 17-dimensional feature vector per sample.
+
+Feature Engineering
+  - The process of computing domain-relevant numerical features
+    (band powers, ratios, Hjorth params, spectral entropy, etc.)
+    from raw EEG signals for use by ML models.
+
+Feature Importance
+  - A measure of how much each feature contributes to the model's
+    prediction. Computed via SHAP or permutation importance.
+
+Scaler (StandardScaler / MinMaxScaler)
+  - Preprocessing transform that scales features to a standard range
+    (e.g., zero mean, unit variance) before model training/inference.
+
+Label Encoder (LabelEncoder)
+  - Converts categorical class labels (e.g., "Happy", "Calm") into
+    integer class indices for model training.
+
+Predict Probability (predict_proba)
+  - Returns a probability score for each class. Used for confidence
+    calculation and ensemble blending.
+
+Confidence Score
+  - The probability of the top predicted emotion class, scaled and
+    shifted to a [0, 0.98] range for display purposes.
+
+Model Bundle (.pkl)
+  - A serialized Python object (joblib-pickled) containing the trained
+    model, scaler, and label encoder together.
+
+Rule-Based Fallback
+  - A neuroscience-derived heuristic that assigns emotion scores from
+    band power ratios if no trained model (.pkl) is loaded.
+
+
+────────────────────────────────────────────────────────────────
+ 4. EXPLAINABILITY (XAI)
+────────────────────────────────────────────────────────────────
+
+SHAP (SHapley Additive exPlanations)
+  - A game-theory-based framework to explain individual predictions
+    by computing each feature's contribution (Shapley value).
+
+Shapley Value
+  - The average marginal contribution of a feature across all possible
+    feature subsets. Positive → pushed toward predicted class;
+    Negative → pushed away from predicted class.
+
+TreeExplainer (SHAP)
+  - A fast SHAP explainer for tree-based models (XGBoost, LightGBM,
+    Random Forest). Uses exact Shapley values.
+
+KernelExplainer (SHAP)
+  - A model-agnostic SHAP explainer that works with any model
+    (used for SVM). Slower but universally applicable.
+
+Permutation Feature Importance (Fallback)
+  - Approximates feature contribution by measuring model performance
+    drop when a feature's values are shuffled.
+
+
+────────────────────────────────────────────────────────────────
+ 5. BACKEND & API
+────────────────────────────────────────────────────────────────
+
+REST API (Representational State Transfer)
+  - An architectural style for web APIs using HTTP methods (GET, POST,
+    PUT, DELETE) to perform operations on resources.
+
+FastAPI
+  - A modern Python web framework for building REST APIs, featuring
+    async support and auto-generated OpenAPI documentation.
+
+Uvicorn
+  - An ASGI (Asynchronous Server Gateway Interface) web server used
+    to run the FastAPI ML service.
+
+Express.js
+  - A minimal Node.js web framework used for the EmoHarmony backend
+    server. Handles routing, middleware, and HTTP responses.
+
+Node.js
+  - A JavaScript runtime built on Chrome's V8 engine, used to run
+    the EmoHarmony backend server.
+
+Middleware
+  - Functions that execute in the request-response cycle between
+    receiving a request and sending a response (e.g., CORS, auth).
+
+CORS (Cross-Origin Resource Sharing)
+  - A browser security mechanism that controls which origins
+    (domains) can access a web API. Configured in both FastAPI
+    and Express servers.
+
+JWT (JSON Web Token)
+  - A compact, URL-safe token format for securely transmitting
+    authentication information. Signed with a secret key.
+    EmoHarmony uses JWT with 7-day expiry.
+
+JWT_SECRET
+  - A secret key used to sign and verify JWTs, ensuring they
+    have not been tampered with.
+
+HTTP Status Codes
+  - 200 OK, 201 Created, 400 Bad Request, 401 Unauthorized,
+    403 Forbidden, 404 Not Found, 409 Conflict, 500 Internal
+    Server Error.
+
+Endpoint
+  - A specific URL path in an API that accepts requests.
+    Examples: POST /predict, GET /health, POST /api/auth/login.
+
+Request/Response Model (Pydantic BaseModel)
+  - Python class-based schema definitions for validating API
+    request bodies and response shapes using Pydantic.
+
+Pydantic
+  - A Python data validation library using type annotations.
+    Used by FastAPI for request/response schema validation.
+
+Multer
+  - A Node.js middleware for handling multipart/form-data
+    (file uploads). Used in the upload route.
+
+SPA Catch-All Route
+  - An Express route that serves the React index.html for any
+    non-API path, enabling client-side routing to work correctly.
+
+Health Check Endpoint
+  - GET /api/health or GET /health — returns service status,
+    version, and loaded model info.
+
+Dotenv (.env)
+  - A module that loads environment variables from a .env file
+    into process.env. Keeps secrets out of source code.
+
+
+────────────────────────────────────────────────────────────────
+ 6. DATABASE
+────────────────────────────────────────────────────────────────
+
+MongoDB
+  - A NoSQL document-oriented database. Stores data in JSON-like
+    BSON documents. Used by EmoHarmony for users and results.
+
+MongoDB Atlas
+  - MongoDB's fully managed cloud database service. Used in
+    production deployment of EmoHarmony.
+
+Mongoose
+  - An ODM (Object Document Mapper) for MongoDB and Node.js.
+    Provides schema-based data modeling.
+
+Schema (Mongoose)
+  - Defines the structure, types, and validation rules for a
+    MongoDB document (e.g., UserSchema, ResultSchema).
+
+ODM (Object Document Mapper)
+  - Maps JavaScript objects to MongoDB documents, similar to how
+    an ORM maps objects to relational database rows.
+
+Collection
+  - A MongoDB grouping of documents, analogous to a table in
+    relational databases (e.g., users, results).
+
+BSON (Binary JSON)
+  - The binary-encoded serialization format used by MongoDB to
+    store and transfer documents.
+
+Document
+  - A single MongoDB record, stored as a JSON-like object.
+
+Timestamps (Mongoose)
+  - Auto-generated createdAt and updatedAt fields added by
+    Mongoose when { timestamps: true } is set in a schema.
+
+Index / Unique Index
+  - A data structure that optimizes field lookups. A unique
+    index enforces uniqueness (e.g., email field in User model).
+
+
+────────────────────────────────────────────────────────────────
+ 7. AUTHENTICATION & SECURITY
+────────────────────────────────────────────────────────────────
+
+Authentication
+  - Verifying the identity of a user (who they are).
+    Implemented via email + password + JWT.
+
+Authorization
+  - Determining what an authenticated user is allowed to do.
+    Implemented via role-based access control (user/researcher/admin).
+
+bcrypt / bcryptjs
+  - A password hashing library using the bcrypt algorithm.
+    Hashes passwords before storing; uses a salt to prevent rainbow
+    table attacks. EmoHarmony uses salt rounds = 12.
+
+Salt (bcrypt)
+  - A random value mixed into the password before hashing to ensure
+    identical passwords produce different hash outputs.
+
+Password Hashing
+  - Transforming a plain-text password into an irreversible hash
+    string using bcrypt before database storage.
+
+Password Reset Token
+  - A secure, time-limited token (SHA-256 hashed) sent to user email.
+    Expires after 1 hour. Used for forgotten password recovery.
+
+SHA-256 (Secure Hash Algorithm 256)
+  - A cryptographic hash function used to hash password reset tokens.
+    Output is a 256-bit (64-character hex) digest.
+
+Crypto (Node.js)
+  - Built-in Node.js module for cryptographic operations:
+    random token generation, hashing (crypto.createHash).
+
+Role-Based Access Control (RBAC)
+  - Users are assigned roles (user, researcher, admin) that determine
+    what API endpoints and data they can access.
+
+verifyToken Middleware
+  - Express middleware that validates the JWT on protected routes
+    and attaches the decoded user to req.user.
+
+Select: false (Mongoose)
+  - Hides a field from query results by default (e.g., password,
+    passwordResetToken) unless explicitly requested.
+
+
+────────────────────────────────────────────────────────────────
+ 8. FRONTEND & REACT
+────────────────────────────────────────────────────────────────
+
+React.js
+  - A JavaScript library for building user interfaces using a
+    component-based architecture with a virtual DOM.
+
+SPA (Single-Page Application)
+  - A web app that loads a single HTML page and dynamically
+    updates content without full page reloads.
+
+React Router
+  - Client-side routing library for React apps. Maps URL paths
+    to React components/pages.
+
+Context API (React)
+  - React's built-in state management mechanism for sharing state
+    (e.g., auth, theme) across the component tree without prop drilling.
+
+useState / useEffect (React Hooks)
+  - useState: manages local component state.
+    useEffect: runs side effects (API calls, subscriptions) after render.
+
+JSX (JavaScript XML)
+  - A syntax extension for JavaScript used in React to write
+    HTML-like markup inside JavaScript files.
+
+Recharts
+  - A React charting library used to render interactive EEG
+    visualizations (radar charts, bar charts, area charts, line charts).
+
+Axios
+  - A promise-based HTTP client used in React to send API
+    requests to the backend and ML service.
+
+Responsive Design
+  - CSS techniques (flexbox, grid, media queries) that adapt the
+    UI layout to different screen sizes.
+
+Theme Toggle (Dark/Light Mode)
+  - UI feature that switches between dark and light color schemes,
+    controlled via a ThemeContext in React.
+
+CSS Variables (Custom Properties)
+  - Allow defining reusable values in CSS (e.g., --primary-color).
+    Used for theming in EmoHarmony.
+
+Component
+  - A reusable, self-contained React UI building block that manages
+    its own state and renders UI.
+
+Page Component
+  - A top-level React component mapped to a URL route (e.g.,
+    Dashboard, Results, Upload, AdminPanel).
+
+
+────────────────────────────────────────────────────────────────
+ 9. DEPLOYMENT & INFRASTRUCTURE
+────────────────────────────────────────────────────────────────
+
+Render.com
+  - A cloud platform used to deploy EmoHarmony's backend (Node.js)
+    and ML service (Python/FastAPI).
+
+render.yaml
+  - Infrastructure-as-code configuration file for Render.com
+    that defines services, build commands, and environment variables.
+
+Environment Variable
+  - A runtime configuration value stored outside the codebase
+    (e.g., MONGO_URI, JWT_SECRET, ML_SERVICE_URL).
+
+PORT
+  - The network port number on which the server listens for
+    incoming HTTP connections (default: 5000 for backend, 8000 for ML).
+
+Build Command
+  - The shell command run to compile/bundle the app for production
+    (e.g., npm run build for the React frontend).
+
+Static File Serving
+  - Serving pre-built frontend files (HTML, CSS, JS) directly from
+    the Express server using express.static().
+
+Production Build
+  - An optimized, minified bundle of the React frontend generated by
+    npm run build for deployment.
+
+
+────────────────────────────────────────────────────────────────
+ 10. PYTHON LIBRARIES & TOOLS
+────────────────────────────────────────────────────────────────
+
+NumPy
+  - Fundamental Python library for numerical computing with support
+    for multi-dimensional arrays and mathematical operations.
+
+SciPy
+  - Scientific computing library providing signal processing functions
+    (scipy.signal for filters, PSD; scipy.stats for skewness/kurtosis).
+
+scikit-learn
+  - Python ML library providing SVM, Random Forest, StandardScaler,
+    GridSearchCV, LabelEncoder, and cross-validation utilities.
+
+pandas
+  - Python data manipulation library used for reading and handling
+    structured EEG dataset CSV files during training.
+
+joblib
+  - Python library for serializing (pickling) and loading trained
+    ML model objects (model.pkl files).
+
+PyTorch (torch)
+  - Deep learning framework used to implement and train the
+    Bidirectional LSTM model for raw EEG classification.
+
+XGBoost (Python package)
+  - Python package providing the XGBoost gradient boosting model.
+
+LightGBM (Python package)
+  - Python package providing the LightGBM gradient boosting model.
+
+SHAP (Python package)
+  - Python interpretability library for computing Shapley-based
+    feature importance values for any ML model.
+
+python-multipart
+  - Python package enabling FastAPI to accept file uploads via
+    multipart/form-data HTTP requests.
+
+Pydantic (Python package)
+  - Data validation and settings management library using Python
+    type annotations. Core dependency of FastAPI.
+
+
+────────────────────────────────────────────────────────────────
+ 11. NODE.JS / JAVASCRIPT LIBRARIES
+────────────────────────────────────────────────────────────────
+
+jsonwebtoken (jwt)
+  - Node.js library for signing, verifying, and decoding JWTs.
+
+bcryptjs
+  - JavaScript implementation of the bcrypt password hashing
+    algorithm. Used for secure password storage.
+
+Mongoose (Node.js)
+  - MongoDB ODM for Node.js. Provides schema modeling, validation,
+    middleware hooks, and query helpers.
+
+nodemailer
+  - Node.js module for sending emails. Used for password reset
+    and welcome email notifications.
+
+dotenv
+  - Node.js package that loads environment variables from .env
+    file into process.env.
+
+cors (npm)
+  - Express middleware that enables and configures CORS headers
+    on API responses.
+
+multer (npm)
+  - Node.js middleware for handling multipart/form-data (file
+    uploads). Stores files in the /uploads directory.
+
+
+────────────────────────────────────────────────────────────────
+ 12. STATISTICAL & MATHEMATICAL TERMS
+────────────────────────────────────────────────────────────────
+
+Variance
+  - The average squared deviation of values from the mean.
+    Used in Hjorth Activity calculation.
+
+Standard Deviation (std)
+  - Square root of variance; measures spread of signal values.
+
+Mean (Average)
+  - Sum of values divided by the count. Used for channel averaging.
+
+Median
+  - The middle value in a sorted dataset. Used in IQR-based
+    artifact removal as a robust central tendency measure.
+
+IQR (Interquartile Range)
+  - Q3 − Q1 (difference between 75th and 25th percentiles).
+    Used as a robust measure of signal spread for artifact detection.
+
+Shannon Entropy
+  - Measures information content or uncertainty in a probability
+    distribution: H = −Σ p·log₂(p).
+
+Log-Scale Normalization (log1p)
+  - Applies natural logarithm (log(1 + x)) to compress the range
+    of large positive values (used for Hjorth Activity).
+
+Cumulative Sum (cumsum)
+  - Running total of values in an array. Used to compute SEF95
+    from the cumulative normalized PSD.
+
+Trapezoidal Rule (np.trapz)
+  - Numerical integration method that approximates area under a
+    curve using trapezoids.
+
+argmax
+  - Returns the index of the maximum value in an array. Used to
+    find the peak frequency bin in the PSD.
+
+reshape (numpy)
+  - Changes the shape of an array without altering data.
+    Used to convert feature vectors to 2D (1 × n_features) for sklearn.
+
+nan_to_num
+  - Replaces NaN (Not a Number), +Inf, and −Inf values in an
+    array with zero (or specified values).
+
+===============================================================
+ End of EmoHarmony Technical Terms Reference
+===============================================================
