@@ -142,6 +142,32 @@ const Navbar = () => {
                 <button onClick={() => setMobileOpen(o => !o)}
                     style={{ padding: 6, border: "1px solid var(--border)", borderRadius: 6, background: "none", cursor: "pointer" }}>☰</button>
             </div>
+
+            {/* ── Mobile Drawer Overlay ── */}
+            {mobileOpen && (
+                <div style={{
+                    display: "none", position: "fixed", inset: 0, zIndex: 60,
+                    background: "rgba(0,0,0,0.45)", backdropFilter: "blur(2px)",
+                }} className="mobile-topbar" onClick={() => setMobileOpen(false)}>
+                    <div style={{
+                        position: "absolute", top: 0, left: 0, bottom: 0, width: 240,
+                        background: "var(--bg-surface)", borderRight: "1px solid var(--border)",
+                        display: "flex", flexDirection: "column", padding: "16px 10px",
+                    }} onClick={e => e.stopPropagation()}>
+                        <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 20, paddingLeft: 10 }}>
+                            Emo<span style={{ color: "var(--accent)" }}>Harmony</span>
+                        </div>
+                        {NAV_LINKS.map(link => (
+                            <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)}
+                                className={`sidebar-link ${isActive(link.to) ? "active" : ""}`}>
+                                <span className="icon" style={{ width: 16, height: 16 }}>{link.icon}</span>
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* ── Logout Confirmation Modal ── */}
             {showLogoutModal && (
                 <div style={{

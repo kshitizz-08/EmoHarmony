@@ -120,6 +120,13 @@ const FaceEmotion = () => {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        // Sync canvas dimensions as soon as video dimensions are known
+        videoRef.current.onloadedmetadata = () => {
+          if (canvasRef.current && videoRef.current) {
+            canvasRef.current.width  = videoRef.current.videoWidth;
+            canvasRef.current.height = videoRef.current.videoHeight;
+          }
+        };
         await videoRef.current.play();
       }
       setCameraActive(true);

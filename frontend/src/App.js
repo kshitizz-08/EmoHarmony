@@ -33,8 +33,7 @@ function App() {
 
           <Routes>
             {/* ── Public routes ── */}
-            <Route path="/" element={<EmotionalReels />} />
-            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
