@@ -52,7 +52,33 @@ const MOOD_GOALS = [
   { key: "energized", label: "⚡ Energize Me",   desc: "Get pumped & inspired",  tags: ["happy","surprised"] },
 ];
 
-function getNextReel(currentId, currentEmotion, moodGoalKey, reelHistory, likedIds) {
+async function fetchNextReelML(currentId, currentEmotion, moodGoalKey, reelHistory, likedIds) {
+  try {
+    const res = await fetch("http://localhost:8000/recommend_reel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        current_emotion: currentEmotion,
+        mood_goal: moodGoalKey,
+        history_ids: reelHistory,
+        liked_ids: likedIds,
+        reels: REELS
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const recommended = REELS.find(r => r.id === data.next_reel_id);
+      if (recommended) {
+        // Console log strictly for debugging the ML engine's choices
+        console.log(`🧠 ML Recommender chose Reel #${recommended.id} (${recommended.tag}) for emotion: ${currentEmotion}`);
+        return recommended;
+      }
+    }
+  } catch (e) {
+    console.warn("ML Recommender unreachable, using static fallback.");
+  }
+  
+  // Static Fallback
   const meta = EMOTION_META[currentEmotion] ?? EMOTION_META.neutral;
   const goal = MOOD_GOALS.find(g => g.key === moodGoalKey) ?? MOOD_GOALS[0];
   let targetTags = goal.tags;
@@ -211,6 +237,7 @@ const EmotionalReels = () => {
   const [showReport,     setShowReport]     = useState(false);
   const [transitioning,  setTransitioning]  = useState(false);
   const [manualEmo,      setManualEmo]      = useState(null);
+  const [upNextReel,     setUpNextReel]     = useState(null);
 
   // Load face-api models
   useEffect(() => {
@@ -282,18 +309,28 @@ const EmotionalReels = () => {
 
   const effectiveEmoKey = currentEmo?.key ?? manualEmo ?? "neutral";
 
-  const upNextReel = useMemo(() =>
-    getNextReel(currentReel.id, effectiveEmoKey, moodGoalKey, reelHistory, likedIds),
-    [currentReel.id, effectiveEmoKey, moodGoalKey, reelHistory, likedIds]
-  );
+  useEffect(() => {
+    let cancelled = false;
+    fetchNextReelML(currentReel.id, effectiveEmoKey, moodGoalKey, reelHistory, likedIds)
+      .then(reel => {
+        if (!cancelled) setUpNextReel(reel);
+      });
+    return () => { cancelled = true; };
+  }, [currentReel.id, effectiveEmoKey, moodGoalKey, reelHistory, likedIds]);
 
-  const goNextReel = useCallback(() => {
+  const goNextReel = useCallback(async () => {
     const dom = dominant(emotionLog);
     const meta = EMOTION_META[dom] ?? EMOTION_META.neutral;
-    const next = getNextReel(currentReel.id, dom, moodGoalKey, reelHistory, likedIds);
+    
+    // Show transition overlay while fetching ML recommendation
+    setTransitioning(true);
+    
+    // Force the exact dominant emotion into the ML engine
+    const next = await fetchNextReelML(currentReel.id, dom, moodGoalKey, reelHistory, likedIds);
+    
     setPaletteCleanse(meta.valence === "negative");
     setTimeout(() => setPaletteCleanse(false), 3000);
-    setTransitioning(true);
+    
     setTimeout(() => {
       setCurrentReel(next);
       setReelHistory(prev => [...prev, next.id]);
@@ -303,7 +340,7 @@ const EmotionalReels = () => {
       reelStartRef.current = Date.now();
       setShowAnalytics(false);
       setTransitioning(false);
-    }, 300);
+    }, 150); // Shorter fade since network request takes some time
   }, [currentReel.id, emotionLog, moodGoalKey, reelHistory, likedIds]);
 
   const handleStartWatching = async (goalKey) => {

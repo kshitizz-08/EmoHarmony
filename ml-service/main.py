@@ -58,6 +58,20 @@ class SignalRequest(BaseModel):
     modelType: Optional[str] = "SVM"
     channels: Optional[int] = 1
 
+class ReelMeta(BaseModel):
+    id: int
+    title: str
+    desc: str
+    tag: str
+
+class RecommendRequest(BaseModel):
+    current_emotion: str = "neutral"
+    mood_goal: str = "any"
+    history_ids: List[int] = []
+    liked_ids: List[int] = []
+    reels: List[ReelMeta] = []
+
+
 # ─── Constants ────────────────────────────────────────────────────────────────
 
 SAMPLING_RATE = 128.0  # Hz
@@ -404,3 +418,27 @@ def predict_from_signal(req: SignalRequest):
     eeg_data = np.array(req.signal)
     result   = run_eeg_pipeline(eeg_data, model_type=req.modelType or "SVM")
     return result
+
+
+@app.post("/recommend_reel")
+def recommend_reel(req: RecommendRequest):
+    """
+    ML-powered recommendation engine for Emotional Reels.
+    Uses TF-IDF & Cosine Similarity on video metadata + user profile.
+    """
+    try:
+        from recommender import recommend_next_reel
+        reels_dict = [r.dict() for r in req.reels]
+        
+        next_id = recommend_next_reel(
+            reels=reels_dict,
+            current_emotion=req.current_emotion,
+            mood_goal=req.mood_goal,
+            history_ids=req.history_ids,
+            liked_ids=req.liked_ids
+        )
+        return {"next_reel_id": next_id}
+        
+    except Exception as e:
+        print(f"Recommend error: {e}")
+        raise HTTPException(status_code=500, detail="Recommendation failed")
