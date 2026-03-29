@@ -23,26 +23,26 @@ const EMOTION_META = {
 };
 
 const REELS = [
-  { id: 1,  title: "Natu Natu 🎉 (RRR)",           creator: "@SSRajamouli · T-Series",  tag: "happy",     videoId: "4_eEgJhsBMo", desc: "Oscar-winning smash hit — you can't help but dance!" },
-  { id: 2,  title: "Holi Festival 🌈 NatGeo India", creator: "@NatGeo India",            tag: "happy",     videoId: "AbFIkJ8KFZ8", desc: "Festival of colours — pure joy, laughter, and vibrancy." },
-  { id: 3,  title: "Kesariya 💛 (Brahmastra)",      creator: "@ArijitSingh · Dharma",    tag: "calm",      videoId: "BddP6PYz2gs", desc: "Arijit Singh's soulful love anthem that melts every heart." },
-  { id: 4,  title: "Mumbai Cheeseburst Vada Pav 🔥", creator: "@foodie.india",           tag: "happy",     videoId: "Q46S5BfashM", desc: "Famous Mumbai street food — cheesy, crispy, absolutely fire!" },
-  { id: 5,  title: "ASMR Rain Walk 🌴 Kerala",      creator: "@incredibleindia",         tag: "calm",      videoId: "CV2WZ78n9V0", desc: "4K monsoon ambience walk through a Kerala village — ultimate calm." },
-  { id: 6,  title: "Virat Kohli 100th Century 🏆",  creator: "@BCCI · Cricket",          tag: "surprised", videoId: "L7j9WkK-6o8", desc: "The moment India went wild — King Kohli makes history!" },
-  { id: 7,  title: "Bho Shambho — Bharatanatyam 💃", creator: "@SurabhiBharadwaj",       tag: "calm",      videoId: "KCLQ_NR3RmI", desc: "Stunning Bharatanatyam solo — grace, precision, pure devotion." },
-  { id: 8,  title: "Indian Team Diwali 🎆",          creator: "@BCCI",                   tag: "surprised", videoId: "M-8hYRCe-5U", desc: "The Indian cricket team lights up Diwali — pure celebration!" },
-  { id: 9,  title: "Vande Mataram 🇮🇳 AR Rahman",  creator: "@ARRahman · Sony Music",   tag: "happy",     videoId: "jDn2bn7_YSM", desc: "The goosebump anthem of a billion hearts — Jai Hind!" },
-  { id: 10, title: "Masala Chai ☕ Street Stall",    creator: "@india.streets",           tag: "calm",      videoId: "xmWCONEI2-Q", desc: "Roadside ginger masala chai — the magic of Indian mornings." },
-  { id: 11, title: "Tum Hi Ho 💔 (Aashiqui 2)",     creator: "@ArijitSingh · T-Series",  tag: "sad",       videoId: "Ijl_suHbBmY", desc: "The most iconic sad love song of a generation." },
-  { id: 12, title: "Channa Mereya 😢 (Ae Dil)",     creator: "@Pritam · Dharma",         tag: "sad",       videoId: "gm5BsmKFcL4", desc: "Arijit's heartbreak masterpiece — pure raw emotion." },
-  { id: 13, title: "Zakir Khan Stand-Up 😂",         creator: "@ZakirKhan",              tag: "happy",     videoId: "A8kT6-sMj7A", desc: "India's most beloved comedian — guaranteed to make you laugh!" },
-  { id: 14, title: "Mumbai Monsoon Streets ⛈️",     creator: "@mumbaistreets",           tag: "calm",      videoId: "8lH7amfMHhU", desc: "Mumbai monsoon ASMR — hypnotic rain on the city chowks." },
-  { id: 15, title: "Rang De Basanti Tribute 🇮🇳",  creator: "@bollywoodclips",          tag: "sad",       videoId: "LfmrHTdXgOI", desc: "India's most moving patriotic scene — goosebumps." },
-  { id: 16, title: "MS Dhoni Last Walk 🏏",          creator: "@BCCI",                   tag: "sad",       videoId: "0TlYQDl2MKY", desc: "The farewell that broke a billion hearts." },
-  { id: 17, title: "Bekhayali 💭 (Kabir Singh)",    creator: "@SachetTandon · T-Series", tag: "sad",       videoId: "wFSobJKi3-E", desc: "Raw, aching longing — a masterpiece of pain and longing." },
-  { id: 18, title: "Pahadi ASMR 🏔️ Himachal",      creator: "@indiatravel",             tag: "calm",      videoId: "ZM_IvGjZmrM", desc: "Misty Himalayan villages — pure peace and tranquility." },
-  { id: 19, title: "PV Sindhu Gold 🥇 Tokyo",       creator: "@Olympics · BAI",          tag: "surprised", videoId: "tH6s-HL9V44", desc: "India's pride wins Gold — the entire arena erupts in joy!" },
-  { id: 20, title: "Baarish 🌧️ (Half Girlfriend)", creator: "@ArijitSingh · T-Series",  tag: "calm",      videoId: "Fg5JFk-5d_w", desc: "Perfect rain song — melancholic calm for the soul." },
+  { id: 1,  title: "Aesthetic Coffee Setup ☕",      creator: "@barista.daily",           tag: "calm",      igId: "C1J106PMAaU", desc: "Mesmerizing pour-over coffee ASMR. Perfect for anxiety relief." },
+  { id: 2,  title: "Standup Comedy Gold 😂",         creator: "@standup.clips",           tag: "happy",     igId: "C2Zk8l_xJz9", desc: "Hilarious crowd work interaction that will make you smile." },
+  { id: 3,  title: "Rainy Kyoto Streets 🌧️",         creator: "@japan.awaits",            tag: "calm",      igId: "C0s-8B4N3bY", desc: "Cinematic walk through the rainy, neon-lit streets of Kyoto." },
+  { id: 4,  title: "Gym Motivation 💪",              creator: "@fitness.empire",          tag: "surprised", igId: "Cz_1A2vM7kV", desc: "Incredible 500lb deadlift PR. Pure hype and energy!" },
+  { id: 5,  title: "Heartbreaking Movie Scene 💔",   creator: "@cinema.feels",            tag: "sad",       igId: "C3q_x5yH9aL", desc: "The most emotional scene from Interstellar. Guaranteed tears." },
+  { id: 6,  title: "Deep Sea Exploration 🌊",         creator: "@natgeo",                  tag: "surprised", igId: "Cx9H4KzRg2P", desc: "Bioluminescent creatures discovered 10,000ft deep." },
+  { id: 7,  title: "Cute Golden Retriever Puppy 🐶", creator: "@golden.retrievers",       tag: "happy",     igId: "C1b2C3d4E5f", desc: "Puppy trying a lemon for the first time. Pure joy!" },
+  { id: 8,  title: "Violin Cover - Sad Song 🎻",     creator: "@strings.emotion",         tag: "sad",       igId: "Cy8Jk4Lm9Nq", desc: "Soul-crushing violin cover of a beautiful melancholic track." },
+  { id: 9,  title: "Satisfying Pottery Wheel 🏺",    creator: "@art.relax",               tag: "calm",      igId: "C4m5N6o7P8q", desc: "Watching clay being perfectly centered is ultimate peace." },
+  { id: 10, title: "Angry Chef Rant 🤬",             creator: "@kitchen.nightmares",      tag: "angry",     igId: "C9r8S7t6U5v", desc: "Gordon Ramsay completely losing it over raw chicken!" },
+  { id: 11, title: "Surprise Proposal 💍",           creator: "@love.stories",            tag: "happy",     igId: "C2w3X4y5Z6a", desc: "She had absolutely no idea. The most wholesome reaction." },
+  { id: 12, title: "Haunted House Exploration 👻",   creator: "@spooky.tales",            tag: "fearful",   igId: "C7b8C9d0E1f", desc: "Urban explorers find something terrifying in an abandoned mansion." },
+  { id: 13, title: "Gross Food Combination 🤢",      creator: "@weird.eats",              tag: "disgusted", igId: "C2g3H4j5K6l", desc: "Trying pickles dipped in strawberry milk so you don't have to." },
+  { id: 14, title: "Loss of a Pet 🕊️",               creator: "@grief.journey",           tag: "sad",       igId: "C8m9N0p1Q2r", desc: "A beautiful but heartbreaking tribute to a lifelong furry friend." },
+  { id: 15, title: "Road Rage Dashcam 🚗💨",         creator: "@dashcam.daily",           tag: "angry",     igId: "C3s4T5u6V7w", desc: "Unbelievable brake-checking incident caught on camera." },
+  { id: 16, title: "Magic Trick Reveal 🎩",          creator: "@illusion.arts",           tag: "surprised", igId: "C9x0Y1z2A3b", desc: "How did he do that?! The slow-mo reveal is mind-blowing." },
+  { id: 17, title: "Fear of Heights VR 🏙️",         creator: "@vr.gaming",               tag: "fearful",   igId: "C4c5D6e7F8g", desc: "Walking the plank in VR. My palms are sweating just watching." },
+  { id: 18, title: "Cleaning a Hoarder House 🧽",    creator: "@clean.tok",               tag: "disgusted", igId: "C9h0I1j2K3l", desc: "The before and after is satisfying, but the 'before' is rough." },
+  { id: 19, title: "Baking Bread ASMR 🥖",           creator: "@bakery.love",             tag: "calm",      igId: "C4m5N6o7P8q", desc: "The crunch of the crust and the soft dough kneading." },
+  { id: 20, title: "Baby Laughing Hysterically 👶",  creator: "@family.moments",          tag: "happy",     igId: "C9r8S7t6U5v", desc: "There is nothing more contagious than a baby's laugh." },
 ];
 
 const MOOD_GOALS = [
@@ -116,8 +116,8 @@ const UpNextCard = ({ reel }) => {
     <div style={{ background:"var(--bg-surface)", border:"1px solid var(--border)", borderRadius:14, padding:"14px 16px" }}>
       <div style={{ fontSize:11, fontWeight:700, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.07em", marginBottom:10 }}>⏭ Up Next (AI Pick)</div>
       <div style={{ display:"flex", gap:12, alignItems:"center" }}>
-        <img src={`https://img.youtube.com/vi/${reel.videoId}/mqdefault.jpg`} alt={reel.title}
-          style={{ width:80, height:52, objectFit:"cover", borderRadius:8, flexShrink:0 }} />
+        <img src={`https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg`} alt={reel.title}
+          style={{ width:52, height:80, objectFit:"cover", borderRadius:8, flexShrink:0 }} />
         <div style={{ minWidth:0 }}>
           <div style={{ fontSize:12, fontWeight:700, color:"var(--text-primary)", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{reel.title}</div>
           <div style={{ fontSize:10, color:"var(--text-muted)", marginTop:2 }}>{reel.creator}</div>
@@ -475,28 +475,38 @@ const EmotionalReels = () => {
               <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
 
                 {/* Video with ambient glow */}
-                <div style={{ position:"relative" }}>
+                <div style={{ position:"relative", width:"100%", maxWidth:360, margin:"0 auto" }}>
                   <div style={{ position:"absolute", inset:-10, borderRadius:26, background:`radial-gradient(ellipse, ${ambientColor}28 0%, transparent 70%)`, transition:"background 1.8s ease", pointerEvents:"none", zIndex:0 }} />
-                  <div style={{ background:"#000", borderRadius:16, overflow:"hidden", position:"relative", aspectRatio:"16/9", border:`1.5px solid ${ambientColor}50`, transition:"border-color 1.8s ease", zIndex:1 }}>
+                  
+                  {/* IG-style 9:16 Vertical Container */}
+                  <div style={{ background:"#000", borderRadius:24, overflow:"hidden", position:"relative", aspectRatio:"9/16", border:`1.5px solid ${ambientColor}50`, transition:"border-color 1.8s ease", zIndex:1, boxShadow:"0 12px 40px rgba(0,0,0,0.15)" }}>
 
                     {/* Transition overlay */}
-                    {transitioning && <div style={{ position:"absolute", inset:0, background:"#000", zIndex:10, opacity:0.9 }} />}
+                    {transitioning && <div style={{ position:"absolute", inset:0, background:"#000", zIndex:20, opacity:1 }} />}
 
-                    <iframe
-                      key={`${currentReel.id}-${isMuted}`}
-                      ref={videoRef}
-                      src={`https://www.youtube.com/embed/${currentReel.videoId}?autoplay=1&loop=1&playlist=${currentReel.videoId}&mute=${isMuted?1:0}&controls=0&rel=0&modestbranding=1&playsinline=1`}
-                      title={currentReel.title}
-                      allow="autoplay; encrypted-media"
-                      allowFullScreen
-                      style={{ position:"absolute", inset:0, width:"100%", height:"100%", border:"none", display:"block", opacity:transitioning?0:1, transition:"opacity 0.3s ease" }}
-                    />
-
-                    {/* Info overlay */}
-                    <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)", padding:"48px 18px 64px", color:"#fff", zIndex:2, pointerEvents:"none" }}>
-                      <div style={{ fontSize:11, opacity:0.7, marginBottom:2 }}>{currentReel.creator}</div>
-                      <div style={{ fontSize:16, fontWeight:700 }}>{currentReel.title}</div>
-                      <div style={{ fontSize:12, opacity:0.8, marginTop:4 }}>{currentReel.desc}</div>
+                    {/* Official Instagram Embed Iframe */}
+                    <div style={{ width:"100%", height:"100%", overflow:"hidden", display:"flex", justifyContent:"center", alignItems:"center", background:"#111" }}>
+                      <iframe
+                        key={`${currentReel.id}`}
+                        ref={videoRef}
+                        src={`https://www.instagram.com/reel/${currentReel.igId}/embed/?autoplay=1`}
+                        title={currentReel.title}
+                        frameBorder="0"
+                        scrolling="no"
+                        allowTransparency="true"
+                        allow="encrypted-media"
+                        style={{ width:"100%", height:"100%", border:"none", opacity:transitioning?0:1, transition:"opacity 0.3s ease", scale:1.02 }}
+                      />
+                    </div>
+                    
+                    {/* Fallback Overlay (in case IG embed blocks dynamically) */}
+                    <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)", padding:"64px 20px 24px", color:"#fff", zIndex:2, pointerEvents:"none" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
+                        <div style={{ width:28, height:28, borderRadius:"50%", background:`linear-gradient(45deg, ${ambientColor}, #ec4899)` }}></div>
+                        <div style={{ fontSize:14, fontWeight:700 }}>{currentReel.creator}</div>
+                      </div>
+                      <div style={{ fontSize:15, fontWeight:600, lineHeight:1.3 }}>{currentReel.title}</div>
+                      <div style={{ fontSize:12, opacity:0.8, marginTop:6 }}>{currentReel.desc}</div>
                     </div>
 
                     {/* Like / Dislike — bottom right */}
